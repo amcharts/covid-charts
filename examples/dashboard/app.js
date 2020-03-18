@@ -256,27 +256,40 @@ am4core.ready( function() {
 		table.find( ".area" ).remove();
 		for ( var i = 0; i < list.length; i++ ) {
 			var area = list[ i ];
-			var tr = $( "<tr>" ).addClass( "area" ).data("areaid", area.id).appendTo( table );
-			$( "<td>" ).appendTo( tr ).html( area.name );
-			$( "<td>" ).addClass("value").appendTo( tr ).html( area.confirmed );
-			$( "<td>" ).addClass("value").appendTo( tr ).html( area.deaths );
-			$( "<td>" ).addClass("value").appendTo( tr ).html( area.recovered );
-			tr.on("click", function() {
-				highlighArea($(this).data("areaid"));
-			})
+			var tr = $( "<tr>" ).addClass( "area" ).data( "areaid", area.id ).appendTo( table );
+			var cb = $( "<input type='checkbox'>" ).addClass( "area-selector" ).data( "areaid", area.id ).on( "change", updateSelection );
+			$( "<td>" ).appendTo( tr ).append( cb );
+			$( "<td>" ).appendTo( tr ).data( "areaid", area.id ).html( area.name ).on( "click", function() {
+				highlighArea( $( this ).data( "areaid" ) );
+			} );
+			$( "<td>" ).addClass( "value" ).appendTo( tr ).html( area.confirmed );
+			$( "<td>" ).addClass( "value" ).appendTo( tr ).html( area.deaths );
+			$( "<td>" ).addClass( "value" ).appendTo( tr ).html( area.recovered );
 
 		}
 		$( "#areas" ).DataTable( {
-			paging: false
-		} ).column( "1" )
+				"paging": false,
+				"columnDefs": [ {
+					"targets": 0,
+					"orderable": false
+				} ]
+			} ).column( "2" )
 			.order( "desc" )
 			.draw();;
 	}
 
 	populateCountries( slideData.list );
 
-	function highlighArea(id) {
-		mapChart.zoomToMapObject(polygonSeries.getPolygonById(id));
+	function highlighArea( id ) {
+		mapChart.zoomToMapObject( polygonSeries.getPolygonById( id ) );
+	}
+
+	function updateSelection() {
+		var selected = [];
+		$( ".area-selector:checked" ).each( function() {
+			selected.push( $( this ).data( "areaid" ) );
+		} );
+		console.log( selected );
 	}
 
 
