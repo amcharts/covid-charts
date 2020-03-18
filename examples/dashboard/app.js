@@ -89,14 +89,16 @@ am4core.ready(function() {
 	polygonSeries.nonScalingStroke = true;
 	polygonSeries.strokeWidth = 0.5;
 	polygonSeries.calculateVisualCenter = true;
+	polygonSeries.data = mapData;
 
+	polygonSeries.heatRules.push({ property: "fill", target: polygonSeries.mapPolygons.template, min: am4core.color("#ffffff"), max: am4core.color("#AAAA00") });
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
-	polygonTemplate.polygon.fill = am4core.color("#363439");
-	polygonTemplate.polygon.stroke = am4core.color("#454545");
+	//polygonTemplate.polygon.fill = am4core.color("#363439");
+	//polygonTemplate.polygon.stroke = am4core.color("#454545");
 
-	var hs = polygonTemplate.polygon.states.create("hover")
-	hs.properties.fill = am4core.color("#4d535e")
+	var hs = polygonTemplate.states.create("hover")
+	//hs.properties.fill = am4core.color("#4d535e")
 
 	var imageSeries = mapChart.series.push(new am4maps.MapImageSeries());
 	imageSeries.data = mapData;
@@ -168,12 +170,18 @@ am4core.ready(function() {
 	slider.background.fill = am4core.color("#ffffff");
 	slider.marginLeft = 30;
 	slider.height = 15;
+	slider.start = 1;
 	slider.width = am4core.percent(100);
+
+	slider.events.on("rangechanged", function(event){
+		console.log(slider.start);
+	})
 
 	var casesChart = toolsContainer.createChild(am4charts.XYChart);
 	casesChart.data = covid_total_timeline;
 	casesChart.leftAxesContainer.layout = "vertical"
 	casesChart.maskBullets = false;
+	casesChart.zoomOutButton.disabled = true;
 
 	var dateAxis = casesChart.xAxes.push(new am4charts.DateAxis());
 	dateAxis.renderer.minGridDistance = 50;
