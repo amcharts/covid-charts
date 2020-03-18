@@ -17,6 +17,13 @@ am4core.useTheme(am4themes_dark);
 
 am4core.ready(function() {
 
+	var backgroundColor = am4core.color("#1e2128"); 
+	var confirmedColor = am4core.color("#ff0000");
+	var recoveredColor = am4core.color("#00ff00");
+	var deathsColor = am4core.color("#000000");
+
+	var buttonStrokeColor = am4core.color("#ffffff");
+
 	// function that returns current slide
 	// if index is not set, get last slide
 	function getSlideData(index) {
@@ -50,7 +57,9 @@ am4core.ready(function() {
 	mapChart.height = am4core.percent(80);
 
 	var title = mapChart.titles.create();
-	title.text = "[bold font-size: 20]Coronavirus map[/]";
+	title.fontSize = "1.4em";
+	title.y = 20;
+	title.text = "COVID-19 Map, World data";
 	title.textAlign = "middle";
 
 	var toolsContainer = container.createChild(am4core.Container);
@@ -102,7 +111,7 @@ am4core.ready(function() {
 			return 0;
 		}
 		return opacity;
-	})	
+	})
 
 	var circle = imageTemplate.createChild(am4core.Circle);
 	circle.fillOpacity = 0.5;
@@ -164,10 +173,11 @@ am4core.ready(function() {
 	var casesChart = toolsContainer.createChild(am4charts.XYChart);
 	casesChart.data = covid_total_timeline;
 	casesChart.leftAxesContainer.layout = "vertical"
-	casesChart.valign = "bottom"
-
+	casesChart.maskBullets = false;
 
 	var dateAxis = casesChart.xAxes.push(new am4charts.DateAxis());
+	dateAxis.renderer.minGridDistance = 50;
+	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
 
 
 	casesChart.cursor = new am4charts.XYCursor();
@@ -178,33 +188,45 @@ am4core.ready(function() {
 	casesChart.cursor.lineX.fill = am4core.color("#ffffff")
 	casesChart.legend = new am4charts.Legend();
 	casesChart.legend.parent = casesChart.plotContainer;
+	casesChart.fontSize = "0.8em";
 
 	var valueAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
+	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	valueAxis.renderer.baseGrid.disabled = true;
 	//valueAxis.marginBottom = 30;
 
 	//var deathAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
 
-	var casesSeries = casesChart.series.push(new am4charts.LineSeries())
-	casesSeries.dataFields.valueY = "confirmed";
-	casesSeries.dataFields.dateX = "date";
-	casesSeries.name = "Confirmed";
+	var confirmedSeries = casesChart.series.push(new am4charts.LineSeries())
+	confirmedSeries.dataFields.valueY = "confirmed";
+	confirmedSeries.dataFields.dateX = "date";
+	confirmedSeries.stroke = confirmedColor;
+	confirmedSeries.strokeOpacity = 0.5;
+	confirmedSeries.fill = confirmedSeries.stroke;
+	confirmedSeries.name = "Confirmed";
 
-	var casesBullet = casesSeries.bullets.push(new am4charts.CircleBullet());
+	var casesBullet = confirmedSeries.bullets.push(new am4charts.CircleBullet());
+	casesBullet.circle.fillOpacity = 1;
+	casesBullet.circle.fill = backgroundColor;
 	casesBullet.circle.radius = 3;
 
 	var recoveredSeries = casesChart.series.push(new am4charts.LineSeries())
 	recoveredSeries.dataFields.valueY = "recovered";
 	recoveredSeries.dataFields.dateX = "date";
 	recoveredSeries.name = "Recovered";
+	recoveredSeries.strokeOpacity = 0.5;
+	recoveredSeries.stroke = recoveredColor;
 
 	var recoveredBullet = recoveredSeries.bullets.push(new am4charts.CircleBullet());
 	recoveredBullet.circle.radius = 3;
+	recoveredBullet.circle.fill = backgroundColor;
 
 
 	var deathSeries = casesChart.series.push(new am4charts.ColumnSeries())
 	deathSeries.dataFields.valueY = "deaths";
 	deathSeries.dataFields.dateX = "date";
-	//deathSeries.yAxis = deathAxis;
+	deathSeries.fill = deathsColor;
+	deathSeries.stroke = deathsColor;
 	deathSeries.name = "Deaths";
 
 
@@ -219,11 +241,11 @@ am4core.ready(function() {
 	confirmedButton.fontSize = "1.3em";
 	confirmedButton.x = am4core.percent(50);
 	confirmedButton.horizontalCenter = "middle"
-	confirmedButton.y = 50;
+	confirmedButton.y = 70;
 	confirmedButton.background.cornerRadius(30, 30, 30, 30);
 	confirmedButton.background.strokeOpacity = 0.3
 	confirmedButton.background.fillOpacity = 0;
-	confirmedButton.background.stroke = am4core.color("#ffffff");
+	confirmedButton.background.stroke = buttonStrokeColor;
 	confirmedButton.states.create("active");
 	confirmedButton.setStateOnChildren = true;
 
@@ -233,13 +255,13 @@ am4core.ready(function() {
 	var confirmedCircle = new am4core.Circle();
 	confirmedCircle.radius = 10;
 	confirmedCircle.fillOpacity = 0.3;
-	confirmedCircle.fill = am4core.color("#ffffff");
+	confirmedCircle.fill = buttonStrokeColor;
 	confirmedCircle.strokeOpacity = 0;
 	confirmedCircle.valign = "middle";
 	confirmedCircle.marginRight = 10;
 
 	var confirmedActiveState = confirmedCircle.states.create("active");
-	confirmedActiveState.properties.fill = am4core.color("#ff0000");
+	confirmedActiveState.properties.fill = confirmedColor;
 	confirmedActiveState.properties.fillOpacity = 0.5;
 
 	confirmedButton.icon = confirmedCircle;
@@ -248,7 +270,7 @@ am4core.ready(function() {
 	confirmedButton.events.on("hit", function(event) {
 		imageSeries.dataFields.value = "confirmed";
 		imageSeries.invalidateData();
-		imageSeries.mapImages.template.children.getIndex(0).fill = am4core.color("#ff0000");
+		imageSeries.mapImages.template.children.getIndex(0).fill = confirmedColor;
 		confirmedButton.isActive = true;
 		recoveredButton.isActive = false;
 	})
@@ -261,11 +283,11 @@ am4core.ready(function() {
 	recoveredButton.fontSize = "1.3em";
 	recoveredButton.x = am4core.percent(25);
 	recoveredButton.horizontalCenter = "middle"
-	recoveredButton.y = 50;
+	recoveredButton.y = 70;
 	recoveredButton.background.cornerRadius(30, 30, 30, 30);
 	recoveredButton.background.strokeOpacity = 0.3
 	recoveredButton.background.fillOpacity = 0;
-	recoveredButton.background.stroke = am4core.color("#ffffff");
+	recoveredButton.background.stroke = buttonStrokeColor;
 	recoveredButton.states.create("active");
 	recoveredButton.setStateOnChildren = true;
 
@@ -274,14 +296,14 @@ am4core.ready(function() {
 
 	var recoveredCircle = new am4core.Circle();
 	recoveredCircle.radius = 10;
-	recoveredCircle.fillOpacity = 0.3;
-	recoveredCircle.fill = am4core.color("#ffffff");
+	recoveredCircle.fillOpacity = 0.2;
+	recoveredCircle.fill = buttonStrokeColor;
 	recoveredCircle.strokeOpacity = 0;
 	recoveredCircle.valign = "middle";
 	recoveredCircle.marginRight = 10;
 
 	var recoveredActiveState = recoveredCircle.states.create("active");
-	recoveredActiveState.properties.fill = am4core.color("#00ff00");
+	recoveredActiveState.properties.fill = recoveredColor;
 	recoveredActiveState.properties.fillOpacity = 0.5;
 
 	recoveredButton.icon = recoveredCircle;
@@ -290,7 +312,7 @@ am4core.ready(function() {
 	recoveredButton.events.on("hit", function(event) {
 		imageSeries.dataFields.value = "recovered";
 		imageSeries.invalidateData();
-		imageSeries.mapImages.template.children.getIndex(0).fill = am4core.color("#00ff00");
+		imageSeries.mapImages.template.children.getIndex(0).fill = recoveredColor;
 		recoveredButton.isActive = true;
 		confirmedButton.isActive = false;
 	})
@@ -303,11 +325,11 @@ am4core.ready(function() {
 	deathsButton.fontSize = "1.3em";
 	deathsButton.x = am4core.percent(75);
 	deathsButton.horizontalCenter = "middle"
-	deathsButton.y = 50;
+	deathsButton.y = 70;
 	deathsButton.background.cornerRadius(30, 30, 30, 30);
 	deathsButton.background.strokeOpacity = 0.3
 	deathsButton.background.fillOpacity = 0;
-	deathsButton.background.stroke = am4core.color("#ffffff");
+	deathsButton.background.stroke = buttonStrokeColor;
 	deathsButton.states.create("active");
 	deathsButton.setStateOnChildren = true;
 
@@ -317,13 +339,13 @@ am4core.ready(function() {
 	var deathsCircle = new am4core.Circle();
 	deathsCircle.radius = 10;
 	deathsCircle.fillOpacity = 0.3;
-	deathsCircle.fill = am4core.color("#ffffff");
+	deathsCircle.fill = buttonStrokeColor;
 	deathsCircle.strokeOpacity = 0;
 	deathsCircle.valign = "middle";
 	deathsCircle.marginRight = 10;
 
 	var deathsActiveState = deathsCircle.states.create("active");
-	deathsActiveState.properties.fill = am4core.color("#000000");
+	deathsActiveState.properties.fill = deathsColor;
 	deathsActiveState.properties.fillOpacity = 0.5;
 
 	deathsButton.icon = deathsCircle;
@@ -332,7 +354,7 @@ am4core.ready(function() {
 	deathsButton.events.on("hit", function(event) {
 		imageSeries.dataFields.value = "deaths";
 		imageSeries.invalidateData();
-		imageSeries.mapImages.template.children.getIndex(0).fill = am4core.color("#000000");
+		imageSeries.mapImages.template.children.getIndex(0).fill = deathsColor;
 		deathsButton.isActive = true;
 		confirmedButton.isActive = false;
 	})
