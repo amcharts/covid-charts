@@ -17,7 +17,7 @@ am4core.useTheme(am4themes_dark);
 
 am4core.ready(function() {
 
-	var backgroundColor = am4core.color("#1e2128"); 
+	var backgroundColor = am4core.color("#1e2128");
 	var confirmedColor = am4core.color("#ff0000");
 	var recoveredColor = am4core.color("#00ff00");
 	var deathsColor = am4core.color("#000000");
@@ -181,6 +181,7 @@ am4core.ready(function() {
 
 
 	casesChart.cursor = new am4charts.XYCursor();
+	casesChart.cursor.behavior = "none";
 	casesChart.cursor.xAxis = dateAxis;
 	casesChart.cursor.fullWidthLineX = true;
 	casesChart.cursor.lineX.strokeOpacity = 0;
@@ -193,9 +194,16 @@ am4core.ready(function() {
 	var valueAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	valueAxis.renderer.baseGrid.disabled = true;
-	//valueAxis.marginBottom = 30;
 
-	//var deathAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
+	var recoveredSeries = casesChart.series.push(new am4charts.LineSeries())
+	recoveredSeries.dataFields.valueY = "recovered";
+	recoveredSeries.dataFields.dateX = "date";
+	recoveredSeries.name = "Recovered";
+	recoveredSeries.strokeOpacity = 0.5;
+	recoveredSeries.stroke = recoveredColor;
+	recoveredSeries.maskBullets = false;
+	recoveredSeries.hidden = true;
+
 
 	var confirmedSeries = casesChart.series.push(new am4charts.LineSeries())
 	confirmedSeries.dataFields.valueY = "confirmed";
@@ -204,30 +212,33 @@ am4core.ready(function() {
 	confirmedSeries.strokeOpacity = 0.5;
 	confirmedSeries.fill = confirmedSeries.stroke;
 	confirmedSeries.name = "Confirmed";
+	confirmedSeries.maskBullets = false;
 
 	var casesBullet = confirmedSeries.bullets.push(new am4charts.CircleBullet());
 	casesBullet.circle.fillOpacity = 1;
 	casesBullet.circle.fill = backgroundColor;
 	casesBullet.circle.radius = 3;
 
-	var recoveredSeries = casesChart.series.push(new am4charts.LineSeries())
-	recoveredSeries.dataFields.valueY = "recovered";
-	recoveredSeries.dataFields.dateX = "date";
-	recoveredSeries.name = "Recovered";
-	recoveredSeries.strokeOpacity = 0.5;
-	recoveredSeries.stroke = recoveredColor;
+	var deathSeries = casesChart.series.push(new am4charts.LineSeries())
+	deathSeries.maskBullets = false;
+	deathSeries.dataFields.valueY = "deaths";
+	deathSeries.dataFields.dateX = "date";
+	deathSeries.fill = deathsColor;
+	deathSeries.stroke = deathsColor;
+	deathSeries.name = "Deaths";
+	deathSeries.hidden = true;
+
+	var deathsBullet = deathSeries.bullets.push(new am4charts.CircleBullet());
+	deathsBullet.circle.fillOpacity = 1;
+	deathsBullet.circle.fill = backgroundColor;
+	deathsBullet.circle.radius = 3;
 
 	var recoveredBullet = recoveredSeries.bullets.push(new am4charts.CircleBullet());
 	recoveredBullet.circle.radius = 3;
 	recoveredBullet.circle.fill = backgroundColor;
 
 
-	var deathSeries = casesChart.series.push(new am4charts.ColumnSeries())
-	deathSeries.dataFields.valueY = "deaths";
-	deathSeries.dataFields.dateX = "date";
-	deathSeries.fill = deathsColor;
-	deathSeries.stroke = deathsColor;
-	deathSeries.name = "Deaths";
+
 
 
 	// buttons
@@ -273,6 +284,9 @@ am4core.ready(function() {
 		imageSeries.mapImages.template.children.getIndex(0).fill = confirmedColor;
 		confirmedButton.isActive = true;
 		recoveredButton.isActive = false;
+		confirmedSeries.show();
+		recoveredSeries.hide();
+		deathSeries.hide();
 	})
 
 	// recovered button
@@ -315,6 +329,9 @@ am4core.ready(function() {
 		imageSeries.mapImages.template.children.getIndex(0).fill = recoveredColor;
 		recoveredButton.isActive = true;
 		confirmedButton.isActive = false;
+		recoveredSeries.show();
+		confirmedSeries.hide();
+		deathSeries.hide();		
 	})
 
 	// deaths button
@@ -357,6 +374,9 @@ am4core.ready(function() {
 		imageSeries.mapImages.template.children.getIndex(0).fill = deathsColor;
 		deathsButton.isActive = true;
 		confirmedButton.isActive = false;
+		deathSeries.show();
+		recoveredSeries.hide();
+		confirmedSeries.hide();		
 	})
 
 	var button = mapChart.createChild(am4core.Button);
