@@ -69,7 +69,7 @@ am4core.ready(function() {
 	toolsContainer.valign = "bottom";
 
 	var slideData = getSlideData();
-	var mapData = slideData.list;
+	var mapData = am4core.array.copy(JSON.parse(JSON.stringify(slideData.list)));
 
 	// Set map definition
 	mapChart.geodata = am4geodata_worldLow;
@@ -89,13 +89,14 @@ am4core.ready(function() {
 	polygonSeries.nonScalingStroke = true;
 	polygonSeries.strokeWidth = 0.5;
 	polygonSeries.calculateVisualCenter = true;
-	polygonSeries.data = mapData;
-
-	polygonSeries.heatRules.push({ property: "fill", target: polygonSeries.mapPolygons.template, min: am4core.color("#ffffff"), max: am4core.color("#AAAA00") });
+	//	polygonSeries.dataFields.value = "deaths";
+	//polygonSeries.data = mapData;
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
-	//polygonTemplate.polygon.fill = am4core.color("#363439");
-	//polygonTemplate.polygon.stroke = am4core.color("#454545");
+	polygonTemplate.polygon.fill = am4core.color("#3b3b3b");
+	polygonTemplate.polygon.fillOpacity = 0.4
+	polygonTemplate.polygon.stroke = am4core.color("#000000");
+	polygonTemplate.polygon.strokeOpacity = 0.15
 
 	var hs = polygonTemplate.states.create("hover")
 	//hs.properties.fill = am4core.color("#4d535e")
@@ -106,19 +107,17 @@ am4core.ready(function() {
 
 	var imageTemplate = imageSeries.mapImages.template;
 	imageTemplate.nonScaling = true;
-
-	// in order items with 0 value to be hidden
-	imageTemplate.adapter.add("opacity", function(opacity, target) {
-		if (target.dataItem.value == 0) {
-			return 0;
-		}
-		return opacity;
-	})
+	imageTemplate.scale = 1;
 
 	var circle = imageTemplate.createChild(am4core.Circle);
 	circle.fillOpacity = 0.5;
 	circle.fill = am4core.color("#b31410");
 	circle.tooltipText = "{name}: [bold]{value}[/]";
+
+	//imageTemplate.hiddenState.properties.opacity = 0;
+	circle.hiddenState.properties.scale = 0.0001;
+	circle.hiddenState.transitionDuration = 2000;
+	circle.defaultState.transitionDuration = 2000;
 
 
 	imageSeries.heatRules.push({
@@ -126,6 +125,7 @@ am4core.ready(function() {
 		"property": "radius",
 		"min": 3,
 		"max": 40,
+		"maxValue":70000,
 		"dataField": "value"
 	})
 
@@ -173,9 +173,39 @@ am4core.ready(function() {
 	slider.start = 1;
 	slider.width = am4core.percent(100);
 
-	slider.events.on("rangechanged", function(event){
-		console.log(slider.start);
+	slider.events.on("rangechanged", function(event) {
+		updateData(getSlideData(Math.round((covid_world_timeline.length - 1) * slider.start)).list);
 	})
+
+	function updateData(data) {
+		imageSeries.dataItems.each(function(dataItem) {
+			dataItem.dataContext.confirmed = 0;
+			dataItem.dataContext.deaths = 0;
+			dataItem.dataContext.recovered = 0;
+		})
+
+		for (var i = 0; i < data.length; i++) {
+			var di = data[i];
+			var image = imageSeries.getImageById(di.id);
+			if (image) {
+				image.dataItem.dataContext.confirmed = di.confirmed;
+				image.dataItem.dataContext.deaths = di.deaths;
+				image.dataItem.dataContext.recovered = di.recovered;
+			}
+		}
+		imageSeries.invalidateRawData();
+		imageSeries.events.once("dataitemsvalidated", function() {
+			imageSeries.mapImages.each((mapImage) => {
+				var circle = mapImage.children.getIndex(0);
+				if (mapImage.dataItem.value == 0) {
+					circle.hide();
+				}
+				else if (circle.isHidden || circle.isHiding) {
+					circle.show();
+				}
+			})
+		})
+	}
 
 	var casesChart = toolsContainer.createChild(am4charts.XYChart);
 	casesChart.data = covid_total_timeline;
@@ -339,7 +369,7 @@ am4core.ready(function() {
 		confirmedButton.isActive = false;
 		recoveredSeries.show();
 		confirmedSeries.hide();
-		deathSeries.hide();		
+		deathSeries.hide();
 	})
 
 	// deaths button
@@ -384,7 +414,7 @@ am4core.ready(function() {
 		confirmedButton.isActive = false;
 		deathSeries.show();
 		recoveredSeries.hide();
-		confirmedSeries.hide();		
+		confirmedSeries.hide();
 	})
 
 	var button = mapChart.createChild(am4core.Button);
