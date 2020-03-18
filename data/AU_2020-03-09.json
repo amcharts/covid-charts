@@ -1,0 +1,42 @@
+{
+    "AU-NSW": {
+        "confirmed": 48,
+        "deaths": 2,
+        "recovered": 4
+    },
+    "AU-VIC": {
+        "confirmed": 15,
+        "deaths": 0,
+        "recovered": 7
+    },
+    "AU-QLD": {
+        "confirmed": 15,
+        "deaths": 0,
+        "recovered": 8
+    },
+    "AU-SA": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "AU-WA": {
+        "confirmed": 4,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "AU-TAS": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "AU-NT": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "AU-ACT": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    }
+}

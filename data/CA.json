@@ -1,0 +1,52 @@
+{
+    "CA-BC": {
+        "confirmed": 103,
+        "deaths": 4,
+        "recovered": 4
+    },
+    "CA-ON": {
+        "confirmed": 185,
+        "deaths": 1,
+        "recovered": 5
+    },
+    "CA-AB": {
+        "confirmed": 74,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-QC": {
+        "confirmed": 74,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-NB": {
+        "confirmed": 8,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-MB": {
+        "confirmed": 8,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-SK": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-NL": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-PE": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CA-NS": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 0
+    }
+}

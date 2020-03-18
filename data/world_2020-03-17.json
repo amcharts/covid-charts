@@ -1,0 +1,822 @@
+{
+    "TH": {
+        "confirmed": 177,
+        "deaths": 1,
+        "recovered": 41
+    },
+    "JP": {
+        "confirmed": 878,
+        "deaths": 29,
+        "recovered": 144
+    },
+    "SG": {
+        "confirmed": 266,
+        "deaths": 0,
+        "recovered": 114
+    },
+    "NP": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "MY": {
+        "confirmed": 673,
+        "deaths": 2,
+        "recovered": 49
+    },
+    "CA": {
+        "confirmed": 470,
+        "deaths": 5,
+        "recovered": 9
+    },
+    "AU": {
+        "confirmed": 452,
+        "deaths": 5,
+        "recovered": 23
+    },
+    "KH": {
+        "confirmed": 33,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "LK": {
+        "confirmed": 44,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "DE": {
+        "confirmed": 9257,
+        "deaths": 24,
+        "recovered": 67
+    },
+    "FI": {
+        "confirmed": 321,
+        "deaths": 0,
+        "recovered": 10
+    },
+    "AE": {
+        "confirmed": 98,
+        "deaths": 0,
+        "recovered": 23
+    },
+    "PH": {
+        "confirmed": 187,
+        "deaths": 12,
+        "recovered": 5
+    },
+    "IN": {
+        "confirmed": 142,
+        "deaths": 3,
+        "recovered": 14
+    },
+    "IT": {
+        "confirmed": 31506,
+        "deaths": 2503,
+        "recovered": 2941
+    },
+    "SE": {
+        "confirmed": 1190,
+        "deaths": 7,
+        "recovered": 1
+    },
+    "ES": {
+        "confirmed": 11748,
+        "deaths": 533,
+        "recovered": 1028
+    },
+    "BE": {
+        "confirmed": 1243,
+        "deaths": 10,
+        "recovered": 1
+    },
+    "EG": {
+        "confirmed": 196,
+        "deaths": 4,
+        "recovered": 32
+    },
+    "LB": {
+        "confirmed": 120,
+        "deaths": 3,
+        "recovered": 3
+    },
+    "IQ": {
+        "confirmed": 154,
+        "deaths": 11,
+        "recovered": 32
+    },
+    "OM": {
+        "confirmed": 24,
+        "deaths": 0,
+        "recovered": 9
+    },
+    "AF": {
+        "confirmed": 22,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "BH": {
+        "confirmed": 228,
+        "deaths": 1,
+        "recovered": 81
+    },
+    "KW": {
+        "confirmed": 130,
+        "deaths": 0,
+        "recovered": 9
+    },
+    "DZ": {
+        "confirmed": 60,
+        "deaths": 4,
+        "recovered": 12
+    },
+    "HR": {
+        "confirmed": 65,
+        "deaths": 0,
+        "recovered": 4
+    },
+    "CH": {
+        "confirmed": 2700,
+        "deaths": 27,
+        "recovered": 4
+    },
+    "AT": {
+        "confirmed": 1332,
+        "deaths": 3,
+        "recovered": 1
+    },
+    "IL": {
+        "confirmed": 337,
+        "deaths": 0,
+        "recovered": 11
+    },
+    "PK": {
+        "confirmed": 236,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "BR": {
+        "confirmed": 321,
+        "deaths": 1,
+        "recovered": 2
+    },
+    "GE": {
+        "confirmed": 34,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "GR": {
+        "confirmed": 387,
+        "deaths": 5,
+        "recovered": 8
+    },
+    "MK": {
+        "confirmed": 26,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "NO": {
+        "confirmed": 1463,
+        "deaths": 3,
+        "recovered": 1
+    },
+    "RO": {
+        "confirmed": 184,
+        "deaths": 0,
+        "recovered": 16
+    },
+    "EE": {
+        "confirmed": 225,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "SM": {
+        "confirmed": 109,
+        "deaths": 7,
+        "recovered": 4
+    },
+    "BY": {
+        "confirmed": 36,
+        "deaths": 0,
+        "recovered": 3
+    },
+    "IS": {
+        "confirmed": 220,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "LT": {
+        "confirmed": 25,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "MX": {
+        "confirmed": 82,
+        "deaths": 0,
+        "recovered": 4
+    },
+    "NZ": {
+        "confirmed": 12,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "NG": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "IE": {
+        "confirmed": 223,
+        "deaths": 2,
+        "recovered": 5
+    },
+    "LU": {
+        "confirmed": 140,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "MC": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "QA": {
+        "confirmed": 439,
+        "deaths": 0,
+        "recovered": 4
+    },
+    "EC": {
+        "confirmed": 58,
+        "deaths": 2,
+        "recovered": 0
+    },
+    "AZ": {
+        "confirmed": 28,
+        "deaths": 1,
+        "recovered": 6
+    },
+    "AM": {
+        "confirmed": 78,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "DO": {
+        "confirmed": 21,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "ID": {
+        "confirmed": 172,
+        "deaths": 5,
+        "recovered": 8
+    },
+    "PT": {
+        "confirmed": 448,
+        "deaths": 1,
+        "recovered": 3
+    },
+    "AD": {
+        "confirmed": 39,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "LV": {
+        "confirmed": 49,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "MA": {
+        "confirmed": 38,
+        "deaths": 2,
+        "recovered": 1
+    },
+    "SA": {
+        "confirmed": 171,
+        "deaths": 0,
+        "recovered": 6
+    },
+    "SN": {
+        "confirmed": 26,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "AR": {
+        "confirmed": 68,
+        "deaths": 2,
+        "recovered": 3
+    },
+    "CL": {
+        "confirmed": 201,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "JO": {
+        "confirmed": 34,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "UA": {
+        "confirmed": 14,
+        "deaths": 2,
+        "recovered": 0
+    },
+    "HU": {
+        "confirmed": 50,
+        "deaths": 1,
+        "recovered": 2
+    },
+    "LI": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "PL": {
+        "confirmed": 238,
+        "deaths": 5,
+        "recovered": 13
+    },
+    "TN": {
+        "confirmed": 24,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BA": {
+        "confirmed": 26,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "SI": {
+        "confirmed": 275,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "ZA": {
+        "confirmed": 62,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BT": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CM": {
+        "confirmed": 10,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CO": {
+        "confirmed": 65,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "CR": {
+        "confirmed": 41,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "PE": {
+        "confirmed": 117,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "RS": {
+        "confirmed": 65,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "SK": {
+        "confirmed": 72,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "TG": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "MT": {
+        "confirmed": 38,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "MQ": {
+        "confirmed": 16,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "BG": {
+        "confirmed": 67,
+        "deaths": 2,
+        "recovered": 0
+    },
+    "MV": {
+        "confirmed": 13,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BD": {
+        "confirmed": 10,
+        "deaths": 0,
+        "recovered": 3
+    },
+    "PY": {
+        "confirmed": 9,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "AL": {
+        "confirmed": 55,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "CY": {
+        "confirmed": 46,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BN": {
+        "confirmed": 56,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US": {
+        "confirmed": 6343,
+        "deaths": 108,
+        "recovered": 17
+    },
+    "BF": {
+        "confirmed": 15,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "VA": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "MN": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "PA": {
+        "confirmed": 69,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "CN": {
+        "confirmed": 81058,
+        "deaths": 3230,
+        "recovered": 68798
+    },
+    "IR": {
+        "confirmed": 16169,
+        "deaths": 988,
+        "recovered": 5389
+    },
+    "KR": {
+        "confirmed": 8320,
+        "deaths": 81,
+        "recovered": 1407
+    },
+    "FR": {
+        "confirmed": 7652,
+        "deaths": 148,
+        "recovered": 12
+    },
+    "DK": {
+        "confirmed": 977,
+        "deaths": 4,
+        "recovered": 1
+    },
+    "CZ": {
+        "confirmed": 396,
+        "deaths": 0,
+        "recovered": 3
+    },
+    "TW": {
+        "confirmed": 77,
+        "deaths": 1,
+        "recovered": 22
+    },
+    "VN": {
+        "confirmed": 66,
+        "deaths": 0,
+        "recovered": 16
+    },
+    "RU": {
+        "confirmed": 114,
+        "deaths": 0,
+        "recovered": 8
+    },
+    "MD": {
+        "confirmed": 30,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "BO": {
+        "confirmed": 11,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "FO": {
+        "confirmed": 47,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "MF": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "HN": {
+        "confirmed": 8,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GB-CH": {
+        "confirmed": 6,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CD": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CI": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "BL": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "JM": {
+        "confirmed": 12,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "TR": {
+        "confirmed": 47,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "GI": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "CU": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GY": {
+        "confirmed": 7,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "GB": {
+        "confirmed": 1950,
+        "deaths": 55,
+        "recovered": 52
+    },
+    "KZ": {
+        "confirmed": 33,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "PF": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "ET": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "SD": {
+        "confirmed": 1,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "GN": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "AW": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "KE": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "AG": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "UY": {
+        "confirmed": 29,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GH": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "PR": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "JE": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "NA": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "SC": {
+        "confirmed": 4,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "TT": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "VE": {
+        "confirmed": 33,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "SZ": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GA": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GT": {
+        "confirmed": 6,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "GG": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "MR": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "RW": {
+        "confirmed": 7,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "LC": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "VC": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "SR": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GF": {
+        "confirmed": 11,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GU": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "XK": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CF": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CG": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GQ": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "YT": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "UZ": {
+        "confirmed": 10,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "NL": {
+        "confirmed": 1705,
+        "deaths": 43,
+        "recovered": 2
+    },
+    "GP": {
+        "confirmed": 18,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BJ": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GL": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "LR": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "CW": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "SO": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "TZ": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BS": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "KY": {
+        "confirmed": 1,
+        "deaths": 1,
+        "recovered": 0
+    },
+    "RE": {
+        "confirmed": 9,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "BB": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "ME": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "GM": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    }
+}

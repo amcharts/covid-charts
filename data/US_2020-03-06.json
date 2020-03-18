@@ -1,0 +1,257 @@
+{
+    "US-WA": {
+        "confirmed": 78,
+        "deaths": 13,
+        "recovered": 1
+    },
+    "US-NY": {
+        "confirmed": 31,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-CA": {
+        "confirmed": 59,
+        "deaths": 1,
+        "recovered": 2
+    },
+    "US-MA": {
+        "confirmed": 6,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "US-GA": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-CO": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-FL": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-NJ": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-OR": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-TX": {
+        "confirmed": 4,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-IL": {
+        "confirmed": 5,
+        "deaths": 0,
+        "recovered": 2
+    },
+    "US-PA": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-IA": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-MD": {
+        "confirmed": 3,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-NC": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-SC": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-TN": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-VA": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-AZ": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 1
+    },
+    "US-IN": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-KY": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-DC": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-NV": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-NH": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-MN": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-NE": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-OH": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-RI": {
+        "confirmed": 2,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-WI": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-CT": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-HI": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-OK": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-UT": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-KS": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-LA": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-MO": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-VT": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-AK": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-AR": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-DE": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-ID": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-ME": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-MI": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-MS": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-MT": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-NM": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-ND": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-SD": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-WV": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-WY": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    },
+    "US-AL": {
+        "confirmed": 0,
+        "deaths": 0,
+        "recovered": 0
+    }
+}

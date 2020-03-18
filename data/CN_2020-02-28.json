@@ -1,0 +1,167 @@
+{
+    "CN-HB": {
+        "confirmed": 65914,
+        "deaths": 2682,
+        "recovered": 26403
+    },
+    "CN-GD": {
+        "confirmed": 1348,
+        "deaths": 7,
+        "recovered": 935
+    },
+    "CN-HA": {
+        "confirmed": 1272,
+        "deaths": 20,
+        "recovered": 1112
+    },
+    "CN-ZJ": {
+        "confirmed": 1205,
+        "deaths": 1,
+        "recovered": 975
+    },
+    "CN-HN": {
+        "confirmed": 1017,
+        "deaths": 4,
+        "recovered": 830
+    },
+    "CN-AH": {
+        "confirmed": 990,
+        "deaths": 6,
+        "recovered": 821
+    },
+    "CN-36": {
+        "confirmed": 935,
+        "deaths": 1,
+        "recovered": 790
+    },
+    "CN-SD": {
+        "confirmed": 756,
+        "deaths": 6,
+        "recovered": 405
+    },
+    "CN-JX": {
+        "confirmed": 631,
+        "deaths": 0,
+        "recovered": 515
+    },
+    "CN-CQ": {
+        "confirmed": 576,
+        "deaths": 6,
+        "recovered": 422
+    },
+    "CN-SC": {
+        "confirmed": 538,
+        "deaths": 3,
+        "recovered": 338
+    },
+    "CN-HL": {
+        "confirmed": 480,
+        "deaths": 13,
+        "recovered": 283
+    },
+    "CN-BJ": {
+        "confirmed": 410,
+        "deaths": 7,
+        "recovered": 257
+    },
+    "CN-SH": {
+        "confirmed": 337,
+        "deaths": 3,
+        "recovered": 279
+    },
+    "CN-HE": {
+        "confirmed": 318,
+        "deaths": 6,
+        "recovered": 277
+    },
+    "CN-FJ": {
+        "confirmed": 296,
+        "deaths": 1,
+        "recovered": 235
+    },
+    "CN-GX": {
+        "confirmed": 252,
+        "deaths": 2,
+        "recovered": 168
+    },
+    "CN-SN": {
+        "confirmed": 245,
+        "deaths": 1,
+        "recovered": 199
+    },
+    "CN-YN": {
+        "confirmed": 174,
+        "deaths": 2,
+        "recovered": 156
+    },
+    "CN-HI": {
+        "confirmed": 168,
+        "deaths": 5,
+        "recovered": 133
+    },
+    "CN-GZ": {
+        "confirmed": 146,
+        "deaths": 2,
+        "recovered": 112
+    },
+    "CN-TJ": {
+        "confirmed": 136,
+        "deaths": 3,
+        "recovered": 102
+    },
+    "CN-SX": {
+        "confirmed": 133,
+        "deaths": 0,
+        "recovered": 112
+    },
+    "CN-GS": {
+        "confirmed": 91,
+        "deaths": 2,
+        "recovered": 82
+    },
+    "CN-HK": {
+        "confirmed": 94,
+        "deaths": 2,
+        "recovered": 30
+    },
+    "CN-LN": {
+        "confirmed": 121,
+        "deaths": 1,
+        "recovered": 93
+    },
+    "CN-JL": {
+        "confirmed": 93,
+        "deaths": 1,
+        "recovered": 73
+    },
+    "CN-XJ": {
+        "confirmed": 76,
+        "deaths": 3,
+        "recovered": 52
+    },
+    "CN-NM": {
+        "confirmed": 75,
+        "deaths": 0,
+        "recovered": 45
+    },
+    "CN-NX": {
+        "confirmed": 72,
+        "deaths": 0,
+        "recovered": 68
+    },
+    "CN-QH": {
+        "confirmed": 18,
+        "deaths": 0,
+        "recovered": 18
+    },
+    "CN-MO": {
+        "confirmed": 10,
+        "deaths": 0,
+        "recovered": 8
+    },
+    "CN-XZ": {
+        "confirmed": 1,
+        "deaths": 0,
+        "recovered": 1
+    }
+}
