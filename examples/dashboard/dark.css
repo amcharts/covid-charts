@@ -2,6 +2,8 @@ body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	background-color: #212327;
 	color: #aaa;
+	padding: 0px;
+	margin: 0px;
 }
 
 .flexbox {
@@ -10,14 +12,14 @@ body {
 
 #chartdiv {
 	flex: 1;
-	height: 99vh;
+	height: 100vh;
 	float: left;
 }
 
 #list {
 	padding: 0.5em;
 	flex: 0 0 500px;
-	height: 99vh;
+	height: 100vh;
 	float: left;
 	border-left: 1px solid #eee;
 	box-sizing: border-box;
