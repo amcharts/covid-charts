@@ -26,7 +26,13 @@ am4core.ready(function() {
 	var buttonStrokeColor = am4core.color("#ffffff");
 	var currentIndex;
 
-	
+	var countryIndexMap = {};
+
+	var list = covid_world_timeline[0].list;
+	for (var i = 0; i < list.length; i++) {
+		var country = list[i]
+		countryIndexMap[country.id] = i;
+	}
 
 
 	for (var i = 0; i < covid_total_timeline.length; i++) {
@@ -37,7 +43,7 @@ am4core.ready(function() {
 	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
 	var currentDate = lastDate;
 
-	function getTitle(name){
+	function getTitle(name) {
 		return "COVID-19, " + name + ", " + mapChart.dateFormatter.format(currentDate, "dd MMM, yyyy");
 	}
 
@@ -70,14 +76,14 @@ am4core.ready(function() {
 
 	var buttonsContainer = container.createChild(am4core.Container);
 	buttonsContainer.layout = "grid";
-	buttonsContainer.contentAlign = "center";
 	buttonsContainer.width = am4core.percent(90);
-	buttonsContainer.y = 70;
-	buttonsContainer.align = "center";
+	buttonsContainer.x = 10;
+	buttonsContainer.y = 15;
 	buttonsContainer.zIndex = 1000;
 
 	// Create map instance
 	var mapChart = container.createChild(am4maps.MapChart);
+
 	mapChart.zoomControl = new am4maps.ZoomControl();
 	mapChart.zoomControl.align = "right";
 	mapChart.zoomControl.marginRight = 15;
@@ -87,17 +93,27 @@ am4core.ready(function() {
 	mapChart.zoomEasing = am4core.ease.sinOut;
 	mapChart.seriesContainer.events.on("hit", showWorld);
 
+
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
-	title.y = 20;
-	title.text = "COVID-19 in the World";
-	title.textAlign = "middle";
+	title.y = 70;
+	title.align = "left";
+	title.text = getTitle("World");
+  title.horizontalCenter = "left";
+  title.marginLeft = 20;
 
 	var toolsContainer = container.createChild(am4core.Container);
 	toolsContainer.layout = "vertical";
 	toolsContainer.height = am4core.percent(30);
 	toolsContainer.width = am4core.percent(100);
 	toolsContainer.valign = "bottom";
+	toolsContainer.background.fill = am4core.color("#000000");
+	toolsContainer.background = new am4core.RoundedRectangle();
+	toolsContainer.background.cornerRadius(30,30,0,0)
+	toolsContainer.background.fillOpacity = 0.15;
+	toolsContainer.paddingTop = 15;
+	toolsContainer.paddingBottom = 15;
+
 
 	var slideData = getSlideData();
 	// as we will be modifying, make a copy
@@ -153,7 +169,7 @@ am4core.ready(function() {
 	polygonTemplate.events.on("hit", handleCountryHit);
 	polygonTemplate.events.on("over", handleCountryOver);
 	polygonTemplate.events.on("out", handleCountryOut);
-
+	mapChart.deltaLongitude = -10;
 
 
 	var hs = polygonTemplate.polygon.states.create("hover")
@@ -246,7 +262,7 @@ am4core.ready(function() {
 	var sliderContainer = toolsContainer.createChild(am4core.Container);
 
 	sliderContainer.width = am4core.percent(100);
-	sliderContainer.padding(0, 30, 15, 10);
+	sliderContainer.padding(0, 15, 15, 10);
 	sliderContainer.layout = "horizontal";
 
 	var slider = sliderContainer.createChild(am4core.Slider);
@@ -477,7 +493,7 @@ am4core.ready(function() {
 
 	var mapGlobeSwitch = mapChart.createChild(am4core.SwitchButton);
 	mapGlobeSwitch.align = "right"
-	mapGlobeSwitch.y = title.y;
+	mapGlobeSwitch.y = 15;
 	mapGlobeSwitch.leftLabel.text = "Map";
 	mapGlobeSwitch.rightLabel.text = "Globe";
 	mapGlobeSwitch.verticalCenter = "top";
@@ -569,10 +585,30 @@ am4core.ready(function() {
 	}
 
 	function selectCountry(mapPolygon) {
+		polygonSeries.hideTooltip();
 		if (mapPolygon.isActive) {
 			showWorld();
 			return;
 		}
+
+		var chartData = [];
+		var countryIndex = countryIndexMap[mapPolygon.dataItem.id];
+
+		for (var i = 0; i < casesChart.data.length; i++) {
+			var di = covid_world_timeline[i].list;
+
+			var countryData = di[countryIndex];
+
+			var dataContext = casesChart.data[i];
+
+			dataContext.recovered = countryData.recovered;
+			dataContext.confirmed = countryData.confirmed;
+			dataContext.deaths = countryData.deaths;
+			dataContext.active = countryData.confirmed - countryData.recovered;
+		}
+
+		casesChart.invalidateRawData();
+		
 		polygonSeries.mapPolygons.each(function(polygon) {
 			if (polygon != mapPolygon) {
 				polygon.isActive = false;
@@ -624,6 +660,7 @@ am4core.ready(function() {
 	}
 
 	function rotateAndZoom(mapPolygon) {
+		polygonSeries.hideTooltip();
 		var animation = mapChart.animate([{ property: "deltaLongitude", to: -mapPolygon.visualLongitude }, { property: "deltaLatitude", to: -mapPolygon.visualLatitude }], 1000)
 		animation.events.on("animationended", function() {
 			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
