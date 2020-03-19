@@ -96,11 +96,15 @@ am4core.ready(function() {
 
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
-	title.y = 70;
+	title.verticalCenter = "bottom";
+	title.adapter.add("y", function(y, target){
+		return toolsContainer.pixelY;
+	});
 	title.align = "left";
 	title.text = getTitle("World");
-  title.horizontalCenter = "left";
-  title.marginLeft = 20;
+	title.horizontalCenter = "left";
+	title.marginLeft = 20;
+	title.paddingBottom = 10;
 
 	var toolsContainer = container.createChild(am4core.Container);
 	toolsContainer.layout = "vertical";
@@ -109,7 +113,7 @@ am4core.ready(function() {
 	toolsContainer.valign = "bottom";
 	toolsContainer.background.fill = am4core.color("#000000");
 	toolsContainer.background = new am4core.RoundedRectangle();
-	toolsContainer.background.cornerRadius(30,30,0,0)
+	toolsContainer.background.cornerRadius(30, 30, 0, 0)
 	toolsContainer.background.fillOpacity = 0.15;
 	toolsContainer.paddingTop = 15;
 	toolsContainer.paddingBottom = 15;
@@ -350,6 +354,7 @@ am4core.ready(function() {
 	dateAxis.renderer.minGridDistance = 50;
 	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
+	dateAxis.tooltip.label.fontSize = "0.8em";
 
 	casesChart.cursor = new am4charts.XYCursor();
 	casesChart.cursor.behavior = "none";
@@ -608,7 +613,7 @@ am4core.ready(function() {
 		}
 
 		casesChart.invalidateRawData();
-		
+
 		polygonSeries.mapPolygons.each(function(polygon) {
 			if (polygon != mapPolygon) {
 				polygon.isActive = false;
