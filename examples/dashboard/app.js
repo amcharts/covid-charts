@@ -389,7 +389,6 @@ am4core.ready(function() {
 		series.stroke = color;
 		series.maskBullets = false;
 		series.hidden = true;
-		series.sequencedInterpolation = true;
 		series.hideTooltipWhileZooming = true;
 
 		var bullet = series.bullets.push(new am4charts.CircleBullet());
