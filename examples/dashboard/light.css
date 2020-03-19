@@ -46,3 +46,9 @@ table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
 	background-color: #B0BED9;
 	color: #eee;
 }
+
+@media screen and (max-width: 1000px) {
+	#list {
+		display: none;
+	}
+}
