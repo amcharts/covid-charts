@@ -219,16 +219,6 @@ am4core.ready(function() {
 	var imageHoverState = imageTemplate.states.create("hover");
 	imageHoverState.properties.fillOpacity = 1;
 
-	// adjust heat rule if zoomed
-	mapChart.events.on("zoomlevelchanged", function(event) {
-		/*
-		imageSeries.heatRules.getIndex(0).min = 3 * (1 / mapChart.zoomLevel);
-		imageSeries.heatRules.getIndex(0).max = 30 * mapChart.zoomLevel;
-		imageSeries.dataItems.each(function(dataItem) {
-			dataItem.dispatch("calculatedvaluechanged");
-		})*/
-	})
-
 	//imageTemplate.hiddenState.properties.opacity = 0;
 	circle.hiddenState.properties.scale = 0.0001;
 	circle.hiddenState.transitionDuration = 2000;
@@ -354,7 +344,7 @@ am4core.ready(function() {
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
 
-	casesChart.cursor = new am4charts.XYCursor();	
+	casesChart.cursor = new am4charts.XYCursor();
 	casesChart.cursor.behavior = "none";
 	casesChart.cursor.lineY.disabled = true;
 	casesChart.cursor.xAxis = dateAxis;
@@ -616,7 +606,7 @@ am4core.ready(function() {
 
 
 
-		polygonSeries.mapPolygons.each(function(polygon){
+		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
 			polygon.isHover = false;
 		})
@@ -625,22 +615,29 @@ am4core.ready(function() {
 
 		var chartData = [];
 		var countryIndex = countryIndexMap[mapPolygon.dataItem.id];
-		if (am4core.type.hasValue(countryIndex)) {
 
-			for (var i = 0; i < casesChart.data.length; i++) {
-				var di = covid_world_timeline[i].list;
+		for (var i = 0; i < casesChart.data.length; i++) {
+			var di = covid_world_timeline[i].list;
 
-				var countryData = di[countryIndex];
-				if (countryData) {
-
-					var dataContext = casesChart.data[i];
-
-					dataContext.recovered = countryData.recovered;
-					dataContext.confirmed = countryData.confirmed;
-					dataContext.deaths = countryData.deaths;
-					dataContext.active = countryData.confirmed - countryData.recovered;
-				}
+			var countryData = di[countryIndex];
+			var dataContext = casesChart.data[i];
+			if (countryData) {
+				dataContext.recovered = countryData.recovered;
+				dataContext.confirmed = countryData.confirmed;
+				dataContext.deaths = countryData.deaths;
+				dataContext.active = countryData.confirmed - countryData.recovered;
+				valueAxis.min = undefined;
+				valueAxis.max = undefined;				
 			}
+			else {
+				dataContext.recovered = 0;
+				dataContext.confirmed = 0;
+				dataContext.deaths = 0;
+				dataContext.active = 0;
+				valueAxis.min = 0;
+				valueAxis.max = 10;
+			}
+
 
 			casesChart.invalidateRawData();
 
@@ -715,7 +712,7 @@ am4core.ready(function() {
 			polygon.isHover = false;
 		})
 
-		mapChart.goHome();		
+		mapChart.goHome();
 	}
 
 });
