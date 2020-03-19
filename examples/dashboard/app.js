@@ -159,9 +159,6 @@ am4core.ready(function() {
 	polygonSeries.calculateVisualCenter = true;
 	polygonSeries.dataFields.id = "id";
 
-	//	polygonSeries.dataFields.value = "deaths";
-	//polygonSeries.data = mapData;
-
 	var polygonTemplate = polygonSeries.mapPolygons.template;
 	polygonTemplate.fill = am4core.color("#3b3b3b");
 	polygonTemplate.fillOpacity = 0.4
@@ -315,7 +312,7 @@ am4core.ready(function() {
 				casesChart.cursor.triggerMove({ x: x, y: 0 }, "soft");
 			}
 			for (var key in buttons) {
-				buttons[key].label.text = key.toUpperCase() + ": " + di[key];
+				buttons[key].label.text = key.toUpperCase() + ": " + casesChart.data[index][key];
 			}
 			currentIndex = index;
 		}
@@ -343,6 +340,7 @@ am4core.ready(function() {
 	}
 
 	var casesChart = toolsContainer.createChild(am4charts.XYChart);
+
 	casesChart.data = covid_total_timeline;
 	casesChart.leftAxesContainer.layout = "vertical"
 	casesChart.paddingRight = 30;
@@ -356,13 +354,16 @@ am4core.ready(function() {
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
 
-	casesChart.cursor = new am4charts.XYCursor();
+	casesChart.cursor = new am4charts.XYCursor();	
 	casesChart.cursor.behavior = "none";
 	casesChart.cursor.lineY.disabled = true;
 	casesChart.cursor.xAxis = dateAxis;
 	casesChart.legend = new am4charts.Legend();
 	casesChart.legend.parent = casesChart.plotContainer;
 	casesChart.fontSize = "0.8em";
+
+	am4core.getInteraction().body.events.off("down", casesChart.cursor.handleCursorDown, casesChart.cursor)
+	am4core.getInteraction().body.events.off("up", casesChart.cursor.handleCursorUp, casesChart.cursor)
 
 	var valueAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
@@ -419,7 +420,6 @@ am4core.ready(function() {
 
 	function addButton(name, color) {
 		var button = buttonsContainer.createChild(am4core.Button)
-		button.label.text = name.toUpperCase() + ": " + max[name];
 		button.label.valign = "middle"
 		button.fontSize = "1.1em";
 		button.background.cornerRadius(30, 30, 30, 30);
@@ -615,6 +615,8 @@ am4core.ready(function() {
 			return;
 		}
 
+
+
 		polygonSeries.mapPolygons.each(function(polygon){
 			polygon.isActive = false;
 			polygon.isHover = false;
@@ -642,6 +644,8 @@ am4core.ready(function() {
 			}
 
 			casesChart.invalidateRawData();
+
+			updateTotals(currentIndex);
 		}
 
 		title.text = getTitle(mapPolygon.dataItem.dataContext.name);
