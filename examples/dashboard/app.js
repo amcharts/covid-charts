@@ -528,12 +528,12 @@ am4core.ready(function() {
 		table.find(".area").remove();
 		for (var i = 0; i < list.length; i++) {
 			var area = list[i];
-			var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table);
-			var cb = $("<input type='checkbox'>").addClass("area-selector").data("areaid", area.id).on("change", updateSelection);
-			$("<td>").appendTo(tr).append(cb);
-			$("<td>").appendTo(tr).data("areaid", area.id).html(area.name).on("click", function() {
+			var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
 				highlighArea($(this).data("areaid"));
+			}).hover(function() {
+				hoverArea($(this).data("areaid"));
 			});
+			$("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
 			$("<td>").addClass("value").appendTo(tr).html(area.confirmed);
 			$("<td>").addClass("value").appendTo(tr).html(area.deaths);
 			$("<td>").addClass("value").appendTo(tr).html(area.recovered);
@@ -541,11 +541,8 @@ am4core.ready(function() {
 		}
 		$("#areas").DataTable({
 			"paging": false,
-			"columnDefs": [{
-				"targets": 0,
-				"orderable": false
-			}]
-		}).column("2")
+			"select": true
+		}).column("1")
 			.order("desc")
 			.draw();;
 	}
@@ -577,20 +574,15 @@ am4core.ready(function() {
 		}
 	}
 
+	function hoverArea(id) {
+		console.log(id);
+	}
+
 	function rotateAndZoom(mapPolygon) {
 		var animation = mapChart.animate([{ property: "deltaLongitude", to: -mapPolygon.visualLongitude }, { property: "deltaLatitude", to: -mapPolygon.visualLatitude }], 1000)
 		animation.events.on("animationended", function() {
 			mapChart.zoomToMapObject(mapPolygon, 5);
 		})
 	}
-
-	function updateSelection() {
-		var selected = [];
-		$(".area-selector:checked").each(function() {
-			selected.push($(this).data("areaid"));
-		});
-		console.log(selected);
-	}
-
 
 });
