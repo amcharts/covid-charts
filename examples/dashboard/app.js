@@ -162,29 +162,29 @@ am4core.ready(function() {
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
 	polygonTemplate.fill = am4core.color("#3b3b3b");
-	polygonTemplate.fillOpacity = 0.4
+	polygonTemplate.fillOpacity = 1
 	polygonTemplate.stroke = am4core.color("#000000");
 	polygonTemplate.strokeOpacity = 0.15
 	polygonTemplate.setStateOnChildren = true;
-	polygonTemplate.states.create("hover")
-	polygonTemplate.states.create("active")
 
 	polygonTemplate.events.on("hit", handleCountryHit);
 	polygonTemplate.events.on("over", handleCountryOver);
 	polygonTemplate.events.on("out", handleCountryOut);
-	mapChart.deltaLongitude = -10;
+		mapChart.deltaLongitude = -10;
 
 
 	var hs = polygonTemplate.states.create("hover")
-	hs.properties.fill = am4core.color("#000000")
+	hs.properties.fill = am4core.color("#1b1b1b")
 
 	var polygonHoverState = polygonTemplate.states.create("active")
-	polygonHoverState.properties.fill = am4core.color("#000000")
+	polygonHoverState.properties.fill = am4core.color("#0f0f0f")
 
 	var imageSeries = mapChart.series.push(new am4maps.MapImageSeries());
 	imageSeries.data = mapData;
 	imageSeries.dataFields.value = "confirmed";
 	imageSeries.dataFields.id = "id";
+	imageSeries.tooltip.animationDuration = 0;
+	imageSeries.tooltip.showInViewport = false;
 
 	imageSeries.events.on("dataitemsvalidated", function() {
 		imageSeries.dataItems.each((dataItem) => {
@@ -206,6 +206,7 @@ am4core.ready(function() {
 	imageSeries.tooltip.background.fill = am4core.color("#000000");
 
 	var imageTemplate = imageSeries.mapImages.template;
+	imageTemplate.interactionsDisbaled = true;
 	imageTemplate.nonScaling = true;
 	imageTemplate.states.create("hover");
 	imageTemplate.strokeOpacity = 0;
@@ -670,6 +671,7 @@ am4core.ready(function() {
 
 		resetHover();
 		mapPolygon.isHover = true;
+
 
 		var image = imageSeries.getImageById(mapPolygon.dataItem.id);
 
