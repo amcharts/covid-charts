@@ -97,7 +97,7 @@ am4core.ready(function() {
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
 	title.verticalCenter = "bottom";
-	title.adapter.add("y", function(y, target){
+	title.adapter.add("y", function(y, target) {
 		return toolsContainer.pixelY;
 	});
 	title.align = "left";
@@ -158,14 +158,15 @@ am4core.ready(function() {
 	polygonSeries.strokeWidth = 0.5;
 	polygonSeries.calculateVisualCenter = true;
 	polygonSeries.dataFields.id = "id";
+
 	//	polygonSeries.dataFields.value = "deaths";
 	//polygonSeries.data = mapData;
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
-	polygonTemplate.polygon.fill = am4core.color("#3b3b3b");
-	polygonTemplate.polygon.fillOpacity = 0.4
-	polygonTemplate.polygon.stroke = am4core.color("#000000");
-	polygonTemplate.polygon.strokeOpacity = 0.15
+	polygonTemplate.fill = am4core.color("#3b3b3b");
+	polygonTemplate.fillOpacity = 0.4
+	polygonTemplate.stroke = am4core.color("#000000");
+	polygonTemplate.strokeOpacity = 0.15
 	polygonTemplate.setStateOnChildren = true;
 	polygonTemplate.states.create("hover")
 	polygonTemplate.states.create("active")
@@ -176,10 +177,10 @@ am4core.ready(function() {
 	mapChart.deltaLongitude = -10;
 
 
-	var hs = polygonTemplate.polygon.states.create("hover")
+	var hs = polygonTemplate.states.create("hover")
 	hs.properties.fill = am4core.color("#000000")
 
-	var polygonHoverState = polygonTemplate.polygon.states.create("active")
+	var polygonHoverState = polygonTemplate.states.create("active")
 	polygonHoverState.properties.fill = am4core.color("#000000")
 
 	var imageSeries = mapChart.series.push(new am4maps.MapImageSeries());
@@ -205,7 +206,6 @@ am4core.ready(function() {
 	imageSeries.tooltip.getFillFromObject = false;
 	imageSeries.tooltip.background.fillOpacity = 0.2;
 	imageSeries.tooltip.background.fill = am4core.color("#000000");
-
 
 	var imageTemplate = imageSeries.mapImages.template;
 	imageTemplate.nonScaling = true;
@@ -589,37 +589,60 @@ am4core.ready(function() {
 		rollOutCountry(event.target);
 	}
 
+	var currentPolygon;
+
+
+	function resetHover() {
+		polygonSeries.mapPolygons.each(function(polygon) {
+			polygon.isHover = false;
+		})
+
+		imageSeries.mapImages.each(function(image) {
+			image.isHover = false;
+		})
+	}
+
+
 	function selectCountry(mapPolygon) {
+
+		resetHover();
+
 		polygonSeries.hideTooltip();
-		if (mapPolygon.isActive) {
+
+		if (currentPolygon == mapPolygon) {
+			currentPolygon.isActive = false;
 			showWorld();
 			return;
 		}
 
+		polygonSeries.mapPolygons.each(function(polygon){
+			polygon.isActive = false;
+			polygon.isHover = false;
+		})
+
+		currentPolygon = mapPolygon;
+
 		var chartData = [];
 		var countryIndex = countryIndexMap[mapPolygon.dataItem.id];
+		if (am4core.type.hasValue(countryIndex)) {
 
-		for (var i = 0; i < casesChart.data.length; i++) {
-			var di = covid_world_timeline[i].list;
+			for (var i = 0; i < casesChart.data.length; i++) {
+				var di = covid_world_timeline[i].list;
 
-			var countryData = di[countryIndex];
+				var countryData = di[countryIndex];
+				if (countryData) {
 
-			var dataContext = casesChart.data[i];
+					var dataContext = casesChart.data[i];
 
-			dataContext.recovered = countryData.recovered;
-			dataContext.confirmed = countryData.confirmed;
-			dataContext.deaths = countryData.deaths;
-			dataContext.active = countryData.confirmed - countryData.recovered;
-		}
-
-		casesChart.invalidateRawData();
-
-		polygonSeries.mapPolygons.each(function(polygon) {
-			if (polygon != mapPolygon) {
-				polygon.isActive = false;
-				polygon.isHover = false;
+					dataContext.recovered = countryData.recovered;
+					dataContext.confirmed = countryData.confirmed;
+					dataContext.deaths = countryData.deaths;
+					dataContext.active = countryData.confirmed - countryData.recovered;
+				}
 			}
-		})
+
+			casesChart.invalidateRawData();
+		}
 
 		title.text = getTitle(mapPolygon.dataItem.dataContext.name);
 
@@ -644,9 +667,8 @@ am4core.ready(function() {
 	}
 
 	function rollOverCountry(mapPolygon) {
-		polygonSeries.mapPolygons.each(function(polygon) {
-			polygon.isHover = false;
-		})
+
+		resetHover();
 		mapPolygon.isHover = true;
 
 		var image = imageSeries.getImageById(mapPolygon.dataItem.id);
@@ -658,7 +680,7 @@ am4core.ready(function() {
 
 	function rollOutCountry(mapPolygon) {
 		var image = imageSeries.getImageById(mapPolygon.dataItem.id)
-
+		resetHover();
 		if (image) {
 			image.isHover = false;
 		}
@@ -681,7 +703,7 @@ am4core.ready(function() {
 	}
 
 	function showWorld() {
-		mapChart.goHome();
+		resetHover();
 
 		title.text = getTitle("World");
 
@@ -689,6 +711,8 @@ am4core.ready(function() {
 			polygon.isActive = false;
 			polygon.isHover = false;
 		})
+
+		mapChart.goHome();		
 	}
 
 });
