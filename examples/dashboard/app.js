@@ -26,6 +26,8 @@ am4core.ready(function() {
 	var buttonStrokeColor = am4core.color("#ffffff");
 	var currentIndex;
 
+	
+
 
 	for (var i = 0; i < covid_total_timeline.length; i++) {
 		var di = covid_total_timeline[i];
@@ -33,6 +35,11 @@ am4core.ready(function() {
 	}
 
 	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
+	var currentDate = lastDate;
+
+	function getTitle(name){
+		return "COVID-19, " + name + ", " + mapChart.dateFormatter.format(currentDate, "dd MMM, yyyy");
+	}
 
 	// function that returns current slide
 	// if index is not set, get last slide
@@ -62,7 +69,9 @@ am4core.ready(function() {
 	// you can adjust layout
 
 	var buttonsContainer = container.createChild(am4core.Container);
-	buttonsContainer.layout = "horizontal";
+	buttonsContainer.layout = "grid";
+	buttonsContainer.contentAlign = "center";
+	buttonsContainer.width = am4core.percent(90);
 	buttonsContainer.y = 70;
 	buttonsContainer.align = "center";
 	buttonsContainer.zIndex = 1000;
@@ -73,13 +82,15 @@ am4core.ready(function() {
 	mapChart.zoomControl.align = "right";
 	mapChart.zoomControl.marginRight = 15;
 	mapChart.zoomControl.valign = "middle";
+	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
 	mapChart.height = am4core.percent(80);
 	mapChart.zoomEasing = am4core.ease.sinOut;
+	mapChart.seriesContainer.events.on("hit", showWorld);
 
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
 	title.y = 20;
-	title.text = "COVID-19 Map, World data";
+	title.text = "COVID-19 in the World";
 	title.textAlign = "middle";
 
 	var toolsContainer = container.createChild(am4core.Container);
@@ -136,28 +147,20 @@ am4core.ready(function() {
 	polygonTemplate.polygon.stroke = am4core.color("#000000");
 	polygonTemplate.polygon.strokeOpacity = 0.15
 	polygonTemplate.setStateOnChildren = true;
-	polygonTemplate.states.create("hover");
+	polygonTemplate.states.create("hover")
+	polygonTemplate.states.create("active")
 
+	polygonTemplate.events.on("hit", handleCountryHit);
+	polygonTemplate.events.on("over", handleCountryOver);
+	polygonTemplate.events.on("out", handleCountryOut);
 
-	polygonTemplate.events.on("over", function(event) {
-		var image = imageSeries.getImageById(event.target.dataItem.id)
-
-		if (image) {
-			image.isHover = true;
-		}
-	})
-
-	polygonTemplate.events.on("out", function(event) {
-		var image = imageSeries.getImageById(event.target.dataItem.id)
-
-		if (image) {
-			image.isHover = false;
-		}
-	})
 
 
 	var hs = polygonTemplate.polygon.states.create("hover")
 	hs.properties.fill = am4core.color("#000000")
+
+	var polygonHoverState = polygonTemplate.polygon.states.create("active")
+	polygonHoverState.properties.fill = am4core.color("#000000")
 
 	var imageSeries = mapChart.series.push(new am4maps.MapImageSeries());
 	imageSeries.data = mapData;
@@ -288,6 +291,7 @@ am4core.ready(function() {
 			position = dateAxis.toGlobalPosition(position);
 			var x = dateAxis.positionToCoordinate(position);
 			if (casesChart.cursor) {
+				casesChart.cursor.triggerMove({ x: 0, y: 0 }, "soft");
 				casesChart.cursor.triggerMove({ x: x, y: 0 }, "soft");
 			}
 			for (var key in buttons) {
@@ -349,6 +353,7 @@ am4core.ready(function() {
 	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
 
 	var activeSeries = addSeries("active", activeColor);
+	activeSeries.hidden = false;
 	var confirmedSeries = addSeries("confirmed", confirmedColor);
 	var recoveredSeries = addSeries("recovered", recoveredColor);
 	var deathsSeries = addSeries("deaths", deathsColor);
@@ -362,6 +367,8 @@ am4core.ready(function() {
 		series.stroke = color;
 		series.maskBullets = false;
 		series.hidden = true;
+		series.sequencedInterpolation = true;
+		series.hideTooltipWhileZooming = true;
 
 		var bullet = series.bullets.push(new am4charts.CircleBullet());
 		bullet.circle.fillOpacity = 1;
@@ -398,10 +405,10 @@ am4core.ready(function() {
 		button.background.strokeOpacity = 0.3
 		button.background.fillOpacity = 0;
 		button.background.stroke = buttonStrokeColor;
+		button.background.padding(2, 5, 2, 5);
 		button.states.create("active");
 		button.setStateOnChildren = true;
-		button.marginLeft = 10;
-		button.marginRight = 10;
+		button.valign = "top";
 
 		var activeHoverState = button.background.states.create("hoverActive");
 		activeHoverState.properties.fillOpacity = 0;
@@ -529,9 +536,9 @@ am4core.ready(function() {
 		for (var i = 0; i < list.length; i++) {
 			var area = list[i];
 			var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
-				highlighArea($(this).data("areaid"));
+				selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
 			}).hover(function() {
-				hoverArea($(this).data("areaid"));
+				rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
 			});
 			$("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
 			$("<td>").addClass("value").appendTo(tr).html(area.confirmed);
@@ -549,19 +556,40 @@ am4core.ready(function() {
 
 	populateCountries(slideData.list);
 
-	function highlighArea(id) {
-		polygonSeries.mapPolygons.each(function(mapPolygon){
-			mapPolygon.isHover = false;
+	function handleCountryHit(event) {
+		selectCountry(event.target);
+	}
+
+	function handleCountryOver(event) {
+		rollOverCountry(event.target);
+	}
+
+	function handleCountryOut(event) {
+		rollOutCountry(event.target);
+	}
+
+	function selectCountry(mapPolygon) {
+		if (mapPolygon.isActive) {
+			showWorld();
+			return;
+		}
+		polygonSeries.mapPolygons.each(function(polygon) {
+			if (polygon != mapPolygon) {
+				polygon.isActive = false;
+				polygon.isHover = false;
+			}
 		})
-		mapPolygon = polygonSeries.getPolygonById(id);
-		mapPolygon.isHover = true;
+
+		title.text = getTitle(mapPolygon.dataItem.dataContext.name);
+
+		mapPolygon.isActive = true;
 		// meaning it's globe
 		if (mapGlobeSwitch.isActive) {
 			// animate deltas
 			if (mapChart.zoomLevel != 1) {
-				var zoomOutAnimation = mapChart.zoomOut();
+				var zoomOutAnimation = mapChart.goHome();
 				zoomOutAnimation.events.on("animationended", function() {
-					rotateAndZoom(mapPolygon)
+					rotateAndZoom(mapPolygon);
 				});
 			}
 			else {
@@ -570,18 +598,54 @@ am4core.ready(function() {
 
 		}
 		else {
-			mapChart.zoomToMapObject(mapPolygon, 5);
+			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
 		}
 	}
 
-	function hoverArea(id) {
-		console.log(id);
+	function rollOverCountry(mapPolygon) {
+		polygonSeries.mapPolygons.each(function(polygon) {
+			polygon.isHover = false;
+		})
+		mapPolygon.isHover = true;
+
+		var image = imageSeries.getImageById(mapPolygon.dataItem.id);
+
+		if (image) {
+			image.isHover = true;
+		}
+	}
+
+	function rollOutCountry(mapPolygon) {
+		var image = imageSeries.getImageById(mapPolygon.dataItem.id)
+
+		if (image) {
+			image.isHover = false;
+		}
 	}
 
 	function rotateAndZoom(mapPolygon) {
 		var animation = mapChart.animate([{ property: "deltaLongitude", to: -mapPolygon.visualLongitude }, { property: "deltaLatitude", to: -mapPolygon.visualLatitude }], 1000)
 		animation.events.on("animationended", function() {
-			mapChart.zoomToMapObject(mapPolygon, 5);
+			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
+		})
+	}
+
+
+	function getZoomLevel(mapPolygon) {
+		var w = mapPolygon.polygon.bbox.width;
+		var h = mapPolygon.polygon.bbox.width;
+
+		return Math.min(mapChart.seriesWidth / (w * 2), mapChart.seriesHeight / (h * 2))
+	}
+
+	function showWorld() {
+		mapChart.goHome();
+
+		title.text = getTitle("World");
+
+		polygonSeries.mapPolygons.each(function(polygon) {
+			polygon.isActive = false;
+			polygon.isHover = false;
 		})
 	}
 
