@@ -91,7 +91,8 @@ am4core.ready(function() {
 	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
 	mapChart.height = am4core.percent(80);
 	mapChart.zoomEasing = am4core.ease.sinOut;
-	mapChart.seriesContainer.events.on("hit", showWorld);
+	mapChart.seriesContainer.background.fillOpacity = 0;
+	mapChart.seriesContainer.background.events.on("hit", showWorld);
 
 
 	var title = mapChart.titles.create();
@@ -331,7 +332,7 @@ am4core.ready(function() {
 
 	var casesChart = toolsContainer.createChild(am4charts.XYChart);
 
-	casesChart.data = covid_total_timeline;
+	casesChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
 	casesChart.leftAxesContainer.layout = "vertical"
 	casesChart.paddingRight = 30;
 	casesChart.paddingLeft = 30;
@@ -627,7 +628,7 @@ am4core.ready(function() {
 				dataContext.deaths = countryData.deaths;
 				dataContext.active = countryData.confirmed - countryData.recovered;
 				valueAxis.min = undefined;
-				valueAxis.max = undefined;				
+				valueAxis.max = undefined;
 			}
 			else {
 				dataContext.recovered = 0;
@@ -637,12 +638,11 @@ am4core.ready(function() {
 				valueAxis.min = 0;
 				valueAxis.max = 10;
 			}
-
-
-			casesChart.invalidateRawData();
-
-			updateTotals(currentIndex);
 		}
+
+		casesChart.invalidateRawData();
+
+		updateTotals(currentIndex);
 
 		title.text = getTitle(mapPolygon.dataItem.dataContext.name);
 
@@ -703,6 +703,7 @@ am4core.ready(function() {
 	}
 
 	function showWorld() {
+		console.log("showWorld")
 		resetHover();
 
 		title.text = getTitle("World");
@@ -711,6 +712,22 @@ am4core.ready(function() {
 			polygon.isActive = false;
 			polygon.isHover = false;
 		})
+
+		updateTotals(currentIndex);
+
+		for (var i = 0; i < casesChart.data.length; i++) {
+				var di = covid_total_timeline[i];
+				var dataContext = casesChart.data[i];
+
+				dataContext.recovered = di.recovered;
+				dataContext.confirmed = di.confirmed;
+				dataContext.deaths = di.deaths;
+				dataContext.active = di.confirmed - di.recovered;
+				valueAxis.min = undefined;
+				valueAxis.max = undefined;
+		}		
+
+		casesChart.invalidateRawData();
 
 		mapChart.goHome();
 	}
