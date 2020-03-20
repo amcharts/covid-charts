@@ -332,7 +332,7 @@ am4core.ready(function() {
 	chartAndSliderContainer.background.cornerRadius(30, 30, 0, 0)
 	chartAndSliderContainer.background.fillOpacity = 0.15;
 	chartAndSliderContainer.paddingTop = 15;
-	chartAndSliderContainer.paddingBottom = 15;
+	chartAndSliderContainer.paddingBottom = 0;
 
 	// Slider container
 	var sliderContainer = chartAndSliderContainer.createChild(am4core.Container);
@@ -416,6 +416,7 @@ am4core.ready(function() {
 	lineChart.paddingLeft = 30;
 	lineChart.maskBullets = false;
 	lineChart.zoomOutButton.disabled = true;
+	lineChart.paddingBottom = 7;
 
 	// make a copy of data as we will be modifying it
 	lineChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
@@ -691,11 +692,12 @@ am4core.ready(function() {
 		resetHover();
 		if (mapPolygon) {
 			mapPolygon.isHover = true;
-		}
-		// make bubble hovered too
-		var image = bubbleSeries.getImageById(mapPolygon.dataItem.id);
-		if (image) {
-			image.isHover = true;
+
+			// make bubble hovered too
+			var image = bubbleSeries.getImageById(mapPolygon.dataItem.id);
+			if (image) {
+				image.isHover = true;
+			}
 		}
 	}
 	// what happens when a country is rolled-out
@@ -771,9 +773,10 @@ am4core.ready(function() {
 			var position = dateAxis.dateToPosition(date);
 			position = dateAxis.toGlobalPosition(position);
 			var x = dateAxis.positionToCoordinate(position);
+			console.log(x)
+
 			if (lineChart.cursor) {
-				//lineChart.cursor.triggerMove({ x: 0, y: 0 }, "soft");
-				lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft");
+				lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
 			}
 			for (var key in buttons) {
 				buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.data[index][key];
@@ -860,11 +863,17 @@ am4core.ready(function() {
 		})
 	}
 
+	container.events.on("layoutvalidated", function() {
+		dateAxis.tooltip.hide();
+		lineChart.cursor.hide();
+		updateTotals(currentIndex);
+	});
+
 	// set initial data and names
 	populateCountries(slideData.list);
 	updateCountryName();
 	changeDataType("active");
-	
+
 	setTimeout(updateSeriesTooltip, 3000);
 
 });
