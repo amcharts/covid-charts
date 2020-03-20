@@ -30,7 +30,16 @@ Data update frequency is once a day. No set time.
 We have a request: please download and put all the files required for displaying the charts on your websites. Due to high demand for this kind of information, it might put a huge load on our servers, something they might not be able to handle. We're giving this away for free, please help us by easing the load.
 
 ## Technology
+### Charts and maps
 The chart, map and dashboard examples use amCharts 4 product; copyright amCharts. You can use and integrate the charts for free as long as you adhere to the [free use license from amCharts](https://github.com/amcharts/amcharts4#license).
+
+### 3rd party libraries
+Examples use these thord party libraries:
+
+* [jQuery](https://jquery.com/)
+* [DataTables](https://datatables.net/)
+
+Please review their respective licenses before using in your own products.
 
 ## Contributing
 If you want to contribute to this repository, create a pull request. Although, we do not guarantee it will be merged, as maintainers do not have a lot of resources to dedicated to this free endevour.
