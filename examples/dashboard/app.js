@@ -25,6 +25,7 @@ am4core.ready(function() {
 
 	var buttonStrokeColor = am4core.color("#ffffff");
 	var currentIndex;
+	var currentCountry = "World";
 
 	var countryIndexMap = {};
 
@@ -43,8 +44,9 @@ am4core.ready(function() {
 	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
 	var currentDate = lastDate;
 
-	function getTitle(name) {
-		return "COVID-19, " + name + ", " + mapChart.dateFormatter.format(currentDate, "dd MMM, yyyy");
+	function updateTitle() {
+		title.text = "COVID-19";
+		countryTitle.text = currentCountry + ", " + mapChart.dateFormatter.format(currentDate, "MMM dd, yyyy");
 	}
 
 	// function that returns current slide
@@ -74,12 +76,7 @@ am4core.ready(function() {
 
 	// you can adjust layout
 
-	var buttonsContainer = container.createChild(am4core.Container);
-	buttonsContainer.layout = "grid";
-	buttonsContainer.width = am4core.percent(90);
-	buttonsContainer.x = 10;
-	buttonsContainer.y = 15;
-	buttonsContainer.zIndex = 1000;
+
 
 	// Create map instance
 	var mapChart = container.createChild(am4maps.MapChart);
@@ -97,15 +94,12 @@ am4core.ready(function() {
 
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
-	title.verticalCenter = "bottom";
-	title.adapter.add("y", function(y, target) {
-		return toolsContainer.pixelY;
-	});
 	title.align = "left";
-	title.text = getTitle("World");
+
 	title.horizontalCenter = "left";
 	title.marginLeft = 20;
 	title.paddingBottom = 10;
+	title.y = 20;
 
 	var toolsContainer = container.createChild(am4core.Container);
 	toolsContainer.layout = "vertical";
@@ -119,6 +113,34 @@ am4core.ready(function() {
 	toolsContainer.paddingTop = 15;
 	toolsContainer.paddingBottom = 15;
 
+	var titleAndButtonsContainer = container.createChild(am4core.Container)
+	titleAndButtonsContainer.width = am4core.percent(100);
+	titleAndButtonsContainer.padding(0,10,5,20);
+
+	titleAndButtonsContainer.adapter.add("y", function(y, target){
+		return container.pixelHeight - toolsContainer.pixelHeight
+	})
+
+	titleAndButtonsContainer.verticalCenter = "bottom";
+	titleAndButtonsContainer.layout = "horizontal";
+
+	var countryTitle = titleAndButtonsContainer.createChild(am4core.Label);
+	countryTitle.fontSize = "1.4em";
+	countryTitle.valign = "middle";
+
+	var buttonsContainer = titleAndButtonsContainer.createChild(am4core.Container);
+	buttonsContainer.layout = "grid";
+	buttonsContainer.width = am4core.percent(100);
+	buttonsContainer.x = 10;
+	buttonsContainer.contentAlign = "right";
+	
+	buttonsContainer.zIndex = 1000;
+
+
+
+
+
+	updateTitle();	
 
 	var slideData = getSlideData();
 	// as we will be modifying, make a copy
@@ -296,6 +318,10 @@ am4core.ready(function() {
 		if (!isNaN(index)) {
 			var di = covid_total_timeline[index];
 			var date = new Date(di.date);
+			currentDate = date;
+
+			updateTitle();
+
 			var position = dateAxis.dateToPosition(date);
 			position = dateAxis.toGlobalPosition(position);
 			var x = dateAxis.positionToCoordinate(position);
@@ -311,6 +337,8 @@ am4core.ready(function() {
 	}
 
 	function updateData(data) {
+
+
 		imageSeries.dataItems.each(function(dataItem) {
 			dataItem.dataContext.confirmed = 0;
 			dataItem.dataContext.deaths = 0;
@@ -406,7 +434,6 @@ am4core.ready(function() {
 
 		return series;
 	}
-
 
 	// buttons
 
@@ -630,7 +657,8 @@ am4core.ready(function() {
 
 		updateTotals(currentIndex);
 
-		title.text = getTitle(mapPolygon.dataItem.dataContext.name);
+		currentCountry = mapPolygon.dataItem.dataContext.name;
+		updateTitle();
 
 		mapPolygon.isActive = true;
 		// meaning it's globe
@@ -681,6 +709,7 @@ am4core.ready(function() {
 			}
 		}
 		casesChart.invalidateRawData();
+
 	}
 
 
@@ -722,10 +751,10 @@ am4core.ready(function() {
 	}
 
 	function showWorld() {
-		console.log("showWorld")
-		resetHover();
+		
+		currentCountry = "World";
 
-		title.text = getTitle("World");
+		resetHover();
 
 		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
@@ -733,6 +762,7 @@ am4core.ready(function() {
 		})
 
 		updateTotals(currentIndex);
+		updateTitle();
 
 		for (var i = 0; i < casesChart.data.length; i++) {
 			var di = covid_total_timeline[i];
