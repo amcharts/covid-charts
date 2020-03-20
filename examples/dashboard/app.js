@@ -672,7 +672,7 @@ am4core.ready(function() {
 		}
 
 		lineChart.invalidateRawData();
-
+		updateTotals(currentIndex);
 		setTimeout(updateSeriesTooltip, 2000);
 	}
 
@@ -730,6 +730,10 @@ am4core.ready(function() {
 	function showWorld() {
 		currentCountry = "World";
 		resetHover();
+
+		if(countryDataTimeout){
+			clearTimeout(countryDataTimeout);
+		}
 
 		// make all inactive
 		polygonSeries.mapPolygons.each(function(polygon) {
