@@ -22,21 +22,27 @@ am4core.ready(function() {
 	var confirmedColor = am4core.color("#d21a1a");
 	var recoveredColor = am4core.color("#45d21a");
 	var deathsColor = am4core.color("#1c5fe5");
+
 	// for an easier access by key
 	var colors = { active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor };
 
+	var countryColor = am4core.color("#3b3b3b");
+	var countryStrokeColor = am4core.color("#000000");
 	var buttonStrokeColor = am4core.color("#ffffff");
+	var countryHoverColor = am4core.color("#1b1b1b");
+	var activeCountryColor = am4core.color("#0f0f0f");
+
 	var currentIndex;
 	var currentCountry = "World";
 
 	// last date of the data
 	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
 	var currentDate = lastDate;
-	
-	var currentPolygon;	
 
-	var countryDataTimeout;	
-	
+	var currentPolygon;
+
+	var countryDataTimeout;
+
 	var sliderAnimation;
 	//////////////////////////////////////////////////////////////////////////////
 	// PREPARE DATA
@@ -136,6 +142,7 @@ am4core.ready(function() {
 	mapChart.projection = new am4maps.projections.Miller();
 	mapChart.panBehavior = "move";
 
+	// when map is globe, beackground is made visible
 	mapChart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 0.05;
 	mapChart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#ffffff");
 	mapChart.backgroundSeries.hidden = true;
@@ -152,9 +159,9 @@ am4core.ready(function() {
 	polygonSeries.calculateVisualCenter = true;
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
-	polygonTemplate.fill = am4core.color("#3b3b3b");
+	polygonTemplate.fill = countryColor;
 	polygonTemplate.fillOpacity = 1
-	polygonTemplate.stroke = am4core.color("#000000");
+	polygonTemplate.stroke = countryStrokeColor;
 	polygonTemplate.strokeOpacity = 0.15
 	polygonTemplate.setStateOnChildren = true;
 
@@ -166,11 +173,11 @@ am4core.ready(function() {
 	mapChart.deltaLongitude = -10;
 
 	// polygon states
-	var polygonHoverState = polygonTemplate.states.create("hover")
-	polygonHoverState.properties.fill = am4core.color("#1b1b1b")
+	var polygonHoverState = polygonTemplate.states.create("hover");
+	polygonHoverState.properties.fill = countryHoverColor;
 
 	var polygonActiveState = polygonTemplate.states.create("active")
-	polygonActiveState.properties.fill = am4core.color("#0f0f0f")
+	polygonActiveState.properties.fill = activeCountryColor;
 
 	// Bubble series
 	var bubbleSeries = mapChart.series.push(new am4maps.MapImageSeries());
@@ -304,7 +311,7 @@ am4core.ready(function() {
 
 	// name of a country and date label
 	var countryName = nameAndButtonsContainer.createChild(am4core.Label);
-	countryName.fontSize = "1.4em";
+	countryName.fontSize = "1.1em";
 	countryName.valign = "middle";
 
 	// buttons container (active/confirmed/recovered/deaths)
@@ -343,6 +350,7 @@ am4core.ready(function() {
 	slider.height = 15;
 	slider.start = 1;
 
+
 	// what to do when slider is dragged
 	slider.events.on("rangechanged", function(event) {
 		var index = Math.round((covid_world_timeline.length - 1) * slider.start);
@@ -368,6 +376,11 @@ am4core.ready(function() {
 			stop();
 		}
 	})
+	// make slider grip look like play button
+	slider.startGrip.background.fill = playButton.background.fill;
+	slider.startGrip.background.strokeOpacity = 0;
+	slider.startGrip.icon.stroke = am4core.color("#ffffff");
+	slider.startGrip.background.states.copyFrom(playButton.background.states)
 
 	// play behavior
 	function play() {
@@ -392,7 +405,7 @@ am4core.ready(function() {
 			sliderAnimation.pause();
 		}
 		playButton.isActive = false;
-	}	
+	}
 
 	// BOTTOM CHART
 	// https://www.amcharts.com/docs/v4/chart-types/xy-chart/
@@ -421,7 +434,7 @@ am4core.ready(function() {
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
-	//valueAxis.extraMax = 0.05;
+	valueAxis.extraMax = 0.05;
 	valueAxis.renderer.inside = true;
 	valueAxis.renderer.labels.template.verticalCenter = "bottom";
 	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
@@ -434,7 +447,7 @@ am4core.ready(function() {
 	lineChart.cursor.xAxis = dateAxis;
 	// this prevents cursor to move to the clicked location while map is dragged
 	am4core.getInteraction().body.events.off("down", lineChart.cursor.handleCursorDown, lineChart.cursor)
-	am4core.getInteraction().body.events.off("up", lineChart.cursor.handleCursorUp, lineChart.cursor)	
+	am4core.getInteraction().body.events.off("up", lineChart.cursor.handleCursorUp, lineChart.cursor)
 
 	// legend
 	// https://www.amcharts.com/docs/v4/concepts/legend/	
@@ -444,6 +457,7 @@ am4core.ready(function() {
 	// create series
 	var activeSeries = addSeries("active", activeColor);
 	// active series is visible initially
+	activeSeries.tooltip.disabled = true;
 	activeSeries.hidden = false;
 
 	var confirmedSeries = addSeries("confirmed", confirmedColor);
@@ -485,7 +499,8 @@ am4core.ready(function() {
 		series.tooltip.background.fillOpacity = 0.2;
 		series.tooltip.background.fill = am4core.color("#000000");
 		series.tooltip.dy = -4;
-		series.tooltipText = "{name}: {valueY}";
+		series.tooltip.fontSize = "0.8em";
+		series.tooltipText = "{valueY}";
 
 		return series;
 	}
@@ -503,12 +518,12 @@ am4core.ready(function() {
 	function addButton(name, color) {
 		var button = buttonsContainer.createChild(am4core.Button)
 		button.label.valign = "middle"
-		button.fontSize = "1.1em";
+		button.fontSize = "1em";
 		button.background.cornerRadius(30, 30, 30, 30);
 		button.background.strokeOpacity = 0.3
 		button.background.fillOpacity = 0;
 		button.background.stroke = buttonStrokeColor;
-		button.background.padding(2, 5, 2, 5);
+		button.background.padding(2, 3, 2, 3);
 		button.states.create("active");
 		button.setStateOnChildren = true;
 
@@ -516,12 +531,12 @@ am4core.ready(function() {
 		activeHoverState.properties.fillOpacity = 0;
 
 		var circle = new am4core.Circle();
-		circle.radius = 10;
+		circle.radius = 8;
 		circle.fillOpacity = 0.3;
 		circle.fill = buttonStrokeColor;
 		circle.strokeOpacity = 0;
 		circle.valign = "middle";
-		circle.marginRight = 10;
+		circle.marginRight = 5;
 		button.icon = circle;
 
 		// save name to dummy data for later use
@@ -584,6 +599,7 @@ am4core.ready(function() {
 		// if the same country is clicked show world
 		if (currentPolygon == mapPolygon) {
 			currentPolygon.isActive = false;
+			currentPolygon = undefined;
 			showWorld();
 			return;
 		}
@@ -620,7 +636,6 @@ am4core.ready(function() {
 			else {
 				rotateAndZoom(mapPolygon);
 			}
-
 		}
 		// if it's not a globe, simply zoom to the country
 		else {
@@ -653,14 +668,29 @@ am4core.ready(function() {
 				valueAxis.max = 10;
 			}
 		}
+
 		lineChart.invalidateRawData();
+
+		setTimeout(updateSeriesTooltip, 2000);
+	}
+
+	function updateSeriesTooltip() {
+		lineChart.cursor.triggerMove(lineChart.cursor.point, "soft", true);
+		lineChart.series.each(function(series) {
+			if (!series.isHidden) {
+				series.tooltip.disabled = false;
+				series.showTooltipAtDataItem(series.tooltipDataItem);
+			}
+		})
 	}
 
 	// what happens when a country is rolled-over
 	function rollOverCountry(mapPolygon) {
 
 		resetHover();
-		mapPolygon.isHover = true;
+		if (mapPolygon) {
+			mapPolygon.isHover = true;
+		}
 		// make bubble hovered too
 		var image = bubbleSeries.getImageById(mapPolygon.dataItem.id);
 		if (image) {
@@ -741,7 +771,7 @@ am4core.ready(function() {
 			position = dateAxis.toGlobalPosition(position);
 			var x = dateAxis.positionToCoordinate(position);
 			if (lineChart.cursor) {
-				lineChart.cursor.triggerMove({ x: 0, y: 0 }, "soft");
+				//lineChart.cursor.triggerMove({ x: 0, y: 0 }, "soft");
 				lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft");
 			}
 			for (var key in buttons) {
@@ -774,6 +804,7 @@ am4core.ready(function() {
 		bubbleSeries.invalidateRawData();
 	}
 
+	// capitalize first letter
 	function capitalizeFirstLetter(string) {
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
@@ -826,11 +857,13 @@ am4core.ready(function() {
 		bubbleSeries.mapImages.each(function(image) {
 			image.isHover = false;
 		})
-	}	
+	}
 
 	// set initial data and names
 	populateCountries(slideData.list);
 	updateCountryName();
-	changeDataType("active");	
+	changeDataType("active");
+	
+	setTimeout(updateSeriesTooltip, 3000);
 
 });
