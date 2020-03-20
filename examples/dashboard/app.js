@@ -729,6 +729,7 @@ am4core.ready(function() {
 	// show world data
 	function showWorld() {
 		currentCountry = "World";
+		currentPolygon = undefined;
 		resetHover();
 
 		if(countryDataTimeout){
@@ -739,8 +740,7 @@ am4core.ready(function() {
 		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
 		})
-
-		updateTotals(currentIndex);
+		
 		updateCountryName();
 
 		// update line chart data (again, modifying instead of setting new data for a nice animation)
@@ -757,6 +757,8 @@ am4core.ready(function() {
 		}
 
 		lineChart.invalidateRawData();
+
+		updateTotals(currentIndex);
 		mapChart.goHome();
 	}
 
