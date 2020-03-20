@@ -773,7 +773,6 @@ am4core.ready(function() {
 			var position = dateAxis.dateToPosition(date);
 			position = dateAxis.toGlobalPosition(position);
 			var x = dateAxis.positionToCoordinate(position);
-			console.log(x)
 
 			if (lineChart.cursor) {
 				lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
