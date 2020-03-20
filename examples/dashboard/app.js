@@ -129,6 +129,7 @@ am4core.ready(function() {
 	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
 	// clicking on a "sea" will also result a full zoom-out
 	mapChart.seriesContainer.background.events.on("hit", showWorld);
+	mapChart.seriesContainer.background.events.on("over", resetHover);
 	mapChart.seriesContainer.background.fillOpacity = 0;
 	mapChart.zoomEasing = am4core.ease.sinOut;
 
