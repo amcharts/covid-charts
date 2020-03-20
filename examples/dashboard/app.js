@@ -21,31 +21,39 @@ am4core.ready(function() {
 	var activeColor = am4core.color("#ff8726");
 	var confirmedColor = am4core.color("#d21a1a");
 	var recoveredColor = am4core.color("#45d21a");
-	var deathsColor = am4core.color("#1a6cd2");
+	var deathsColor = am4core.color("#1c5fe5");
+	// for an easier access by key
+	var colors = { active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor };
 
 	var buttonStrokeColor = am4core.color("#ffffff");
 	var currentIndex;
 	var currentCountry = "World";
 
-	var countryIndexMap = {};
+	// last date of the data
+	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
+	var currentDate = lastDate;
+	
+	var currentPolygon;	
 
+	var countryDataTimeout;	
+	
+	var sliderAnimation;
+	//////////////////////////////////////////////////////////////////////////////
+	// PREPARE DATA
+	//////////////////////////////////////////////////////////////////////////////
+
+	// make a map of country indexes for later use
+	var countryIndexMap = {};
 	var list = covid_world_timeline[0].list;
 	for (var i = 0; i < list.length; i++) {
 		var country = list[i]
 		countryIndexMap[country.id] = i;
 	}
 
-
+	// calculated active cases in world data (active = confirmed - recovered)
 	for (var i = 0; i < covid_total_timeline.length; i++) {
 		var di = covid_total_timeline[i];
 		di.active = di.confirmed - di.recovered;
-	}
-
-	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
-	var currentDate = lastDate;
-
-	function updateTitle() {		
-		countryTitle.text = currentCountry + ", " + mapChart.dateFormatter.format(currentDate, "MMM dd, yyyy");
 	}
 
 	// function that returns current slide
@@ -68,83 +76,11 @@ am4core.ready(function() {
 		return am4geodata_data_countries2[id] ? am4geodata_data_countries2[id].country : id;
 	}
 
-	// main container
-	var container = am4core.create("chartdiv", am4core.Container);
-	container.width = am4core.percent(100);
-	container.height = am4core.percent(100);
-
-	// you can adjust layout
-
-
-
-	// Create map instance
-	var mapChart = container.createChild(am4maps.MapChart);
-
-	mapChart.zoomControl = new am4maps.ZoomControl();
-	mapChart.zoomControl.align = "right";
-	mapChart.zoomControl.marginRight = 15;
-	mapChart.zoomControl.valign = "middle";
-	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
-	mapChart.height = am4core.percent(80);
-	mapChart.zoomEasing = am4core.ease.sinOut;
-	mapChart.seriesContainer.background.fillOpacity = 0;
-	mapChart.seriesContainer.background.events.on("hit", showWorld);
-
-
-	var title = mapChart.titles.create();
-	title.fontSize = "1.4em";
-	title.text = "COVID-19 Spread Data";
-	title.align = "left";
-
-	title.horizontalCenter = "left";
-	title.marginLeft = 20;
-	title.paddingBottom = 10;
-	title.y = 20;
-
-	var toolsContainer = container.createChild(am4core.Container);
-	toolsContainer.layout = "vertical";
-	toolsContainer.height = am4core.percent(30);
-	toolsContainer.width = am4core.percent(100);
-	toolsContainer.valign = "bottom";
-	toolsContainer.background.fill = am4core.color("#000000");
-	toolsContainer.background = new am4core.RoundedRectangle();
-	toolsContainer.background.cornerRadius(30, 30, 0, 0)
-	toolsContainer.background.fillOpacity = 0.15;
-	toolsContainer.paddingTop = 15;
-	toolsContainer.paddingBottom = 15;
-
-	var titleAndButtonsContainer = container.createChild(am4core.Container)
-	titleAndButtonsContainer.width = am4core.percent(100);
-	titleAndButtonsContainer.padding(0,10,5,20);
-
-	titleAndButtonsContainer.adapter.add("y", function(y, target){
-		return container.pixelHeight - toolsContainer.pixelHeight
-	})
-
-	titleAndButtonsContainer.verticalCenter = "bottom";
-	titleAndButtonsContainer.layout = "horizontal";
-
-	var countryTitle = titleAndButtonsContainer.createChild(am4core.Label);
-	countryTitle.fontSize = "1.4em";
-	countryTitle.valign = "middle";
-
-	var buttonsContainer = titleAndButtonsContainer.createChild(am4core.Container);
-	buttonsContainer.layout = "grid";
-	buttonsContainer.width = am4core.percent(100);
-	buttonsContainer.x = 10;
-	buttonsContainer.contentAlign = "right";
-	
-	buttonsContainer.zIndex = 1000;
-
-
-
-
-
-	updateTitle();	
-
+	// get slide data
 	var slideData = getSlideData();
-	// as we will be modifying, make a copy
-	var mapData = am4core.array.copy(JSON.parse(JSON.stringify(slideData.list)));
+
+	// as we will be modifying raw data, make a copy
+	var mapData = JSON.parse(JSON.stringify(slideData.list));
 	var max = { confirmed: 0, recovered: 0, deaths: 0 };
 
 	// the last day will have most
@@ -162,10 +98,41 @@ am4core.ready(function() {
 		max.active = max.confirmed;
 	}
 
-	// Set map definition
+	// END OF DATA
+
+	//////////////////////////////////////////////////////////////////////////////
+	// LAYOUT & CHARTS
+	//////////////////////////////////////////////////////////////////////////////
+
+	// main container
+	// https://www.amcharts.com/docs/v4/concepts/svg-engine/containers/
+	var container = am4core.create("chartdiv", am4core.Container);
+	container.width = am4core.percent(100);
+	container.height = am4core.percent(100);
+
+	// MAP CHART 
+	// https://www.amcharts.com/docs/v4/chart-types/map/
+	var mapChart = container.createChild(am4maps.MapChart);
+	mapChart.height = am4core.percent(80);
+	mapChart.zoomControl = new am4maps.ZoomControl();
+	mapChart.zoomControl.align = "right";
+	mapChart.zoomControl.marginRight = 15;
+	mapChart.zoomControl.valign = "middle";
+
+	// by default minus button zooms out by one step, but we modify the behavior so when user clicks on minus, the map would fully zoom-out and show world data
+	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
+	// clicking on a "sea" will also result a full zoom-out
+	mapChart.seriesContainer.background.events.on("hit", showWorld);
+	mapChart.seriesContainer.background.fillOpacity = 0;
+	mapChart.zoomEasing = am4core.ease.sinOut;
+
+	// https://www.amcharts.com/docs/v4/chart-types/map/#Map_data
+	// you can use more accurate world map or map of any other country - a wide selection of maps available at: https://github.com/amcharts/amcharts4-geodata
 	mapChart.geodata = am4geodata_worldLow;
 
 	// Set projection
+	// https://www.amcharts.com/docs/v4/chart-types/map/#Setting_projection
+	// instead of Miller, you can use Mercator or many other projections available: https://www.amcharts.com/demos/map-using-d3-projections/
 	mapChart.projection = new am4maps.projections.Miller();
 	mapChart.panBehavior = "move";
 
@@ -173,14 +140,16 @@ am4core.ready(function() {
 	mapChart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#ffffff");
 	mapChart.backgroundSeries.hidden = true;
 
-	// Create map polygon series
+
+	// Map polygon series (defines how country areas look and behave)
 	var polygonSeries = mapChart.series.push(new am4maps.MapPolygonSeries());
-	polygonSeries.exclude = ["AQ"];
+	polygonSeries.dataFields.id = "id";
+	polygonSeries.exclude = ["AQ"]; // Antarctica is excluded in non-globe projection
 	polygonSeries.useGeodata = true;
 	polygonSeries.nonScalingStroke = true;
 	polygonSeries.strokeWidth = 0.5;
+	// this helps to place bubbles in the visual middle of the area
 	polygonSeries.calculateVisualCenter = true;
-	polygonSeries.dataFields.id = "id";
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
 	polygonTemplate.fill = am4core.color("#3b3b3b");
@@ -192,24 +161,70 @@ am4core.ready(function() {
 	polygonTemplate.events.on("hit", handleCountryHit);
 	polygonTemplate.events.on("over", handleCountryOver);
 	polygonTemplate.events.on("out", handleCountryOut);
+
+	// you can have pacific - centered map if you set this to -154.8
 	mapChart.deltaLongitude = -10;
 
+	// polygon states
+	var polygonHoverState = polygonTemplate.states.create("hover")
+	polygonHoverState.properties.fill = am4core.color("#1b1b1b")
 
-	var hs = polygonTemplate.states.create("hover")
-	hs.properties.fill = am4core.color("#1b1b1b")
+	var polygonActiveState = polygonTemplate.states.create("active")
+	polygonActiveState.properties.fill = am4core.color("#0f0f0f")
 
-	var polygonHoverState = polygonTemplate.states.create("active")
-	polygonHoverState.properties.fill = am4core.color("#0f0f0f")
+	// Bubble series
+	var bubbleSeries = mapChart.series.push(new am4maps.MapImageSeries());
+	bubbleSeries.data = mapData;
+	bubbleSeries.dataFields.value = "confirmed";
+	bubbleSeries.dataFields.id = "id";
 
-	var imageSeries = mapChart.series.push(new am4maps.MapImageSeries());
-	imageSeries.data = mapData;
-	imageSeries.dataFields.value = "confirmed";
-	imageSeries.dataFields.id = "id";
-	imageSeries.tooltip.animationDuration = 0;
-	imageSeries.tooltip.showInViewport = false;
+	// adjust tooltip
+	bubbleSeries.tooltip.animationDuration = 0;
+	bubbleSeries.tooltip.showInViewport = false;
+	bubbleSeries.tooltip.background.fillOpacity = 0.2;
+	bubbleSeries.tooltip.getStrokeFromObject = true;
+	bubbleSeries.tooltip.getFillFromObject = false;
+	bubbleSeries.tooltip.background.fillOpacity = 0.2;
+	bubbleSeries.tooltip.background.fill = am4core.color("#000000");
 
-	imageSeries.events.on("dataitemsvalidated", function() {
-		imageSeries.dataItems.each((dataItem) => {
+	var imageTemplate = bubbleSeries.mapImages.template;
+	imageTemplate.interactionsEnabled = false;
+	// if you want bubbles to become bigger when zoomed, set this to false
+	imageTemplate.nonScaling = true;
+	imageTemplate.strokeOpacity = 0;
+	imageTemplate.fillOpacity = 0.5;
+	imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
+	// this is needed for the tooltip to point to the top of the circle instead of the middle
+	imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
+		return -target.children.getIndex(0).radius;
+	})
+
+	// When hovered, circles become non-opaque	
+	var imageHoverState = imageTemplate.states.create("hover");
+	imageHoverState.properties.fillOpacity = 1;
+
+	// add circle inside the image
+	var circle = imageTemplate.createChild(am4core.Circle);
+	// this makes the circle to pulsate a bit when showing it
+	circle.hiddenState.properties.scale = 0.0001;
+	circle.hiddenState.transitionDuration = 2000;
+	circle.defaultState.transitionDuration = 2000;
+	circle.defaultState.transitionEasing = am4core.ease.elasticOut;
+	// later we set fill color on template (when changing what type of data the map should show) and all the clones get the color because of this
+	circle.applyOnClones = true;
+
+	// heat rule makes the bubbles to be of a different width. Adjust min/max for smaller/bigger radius of a bubble
+	bubbleSeries.heatRules.push({
+		"target": circle,
+		"property": "radius",
+		"min": 3,
+		"max": 30,
+		"dataField": "value"
+	})
+
+	// when data items validated, hide 0 value bubbles (because min size is set)
+	bubbleSeries.events.on("dataitemsvalidated", function() {
+		bubbleSeries.dataItems.each((dataItem) => {
 			var mapImage = dataItem.mapImage;
 			var circle = mapImage.children.getIndex(0);
 			if (mapImage.dataItem.value == 0) {
@@ -221,45 +236,9 @@ am4core.ready(function() {
 		})
 	})
 
-	imageSeries.tooltip.background.fillOpacity = 0.2;
-	imageSeries.tooltip.getStrokeFromObject = true;
-	imageSeries.tooltip.getFillFromObject = false;
-	imageSeries.tooltip.background.fillOpacity = 0.2;
-	imageSeries.tooltip.background.fill = am4core.color("#000000");
-
-	var imageTemplate = imageSeries.mapImages.template;
-	imageTemplate.interactionsEnabled = false;
-	imageTemplate.nonScaling = true;
-	imageTemplate.states.create("hover");
-	imageTemplate.strokeOpacity = 0;
-	imageTemplate.fillOpacity = 0.5;
-	imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
-	imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
-		return -target.children.getIndex(0).radius;
-	})
-
-	var circle = imageTemplate.createChild(am4core.Circle);
-
-	var imageHoverState = imageTemplate.states.create("hover");
-	imageHoverState.properties.fillOpacity = 1;
-
-	//imageTemplate.hiddenState.properties.opacity = 0;
-	circle.hiddenState.properties.scale = 0.0001;
-	circle.hiddenState.transitionDuration = 2000;
-	circle.defaultState.transitionDuration = 2000;
-	circle.defaultState.transitionEasing = am4core.ease.elasticOut;
-	circle.applyOnClones = true;
-
-	imageSeries.heatRules.push({
-		"target": circle,
-		"property": "radius",
-		"min": 3,
-		"max": 30,
-		"dataField": "value"
-	})
-
+	// this places bubbles at the visual center of a country
 	imageTemplate.adapter.add("latitude", function(latitude, target) {
-		var polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id);
+		var polygon = polygonSeries.getPolygonById(target.dataItem.id);
 		if (polygon) {
 			return polygon.visualLatitude;
 		}
@@ -267,254 +246,26 @@ am4core.ready(function() {
 	})
 
 	imageTemplate.adapter.add("longitude", function(longitude, target) {
-		var polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id);
+		var polygon = polygonSeries.getPolygonById(target.dataItem.id);
 		if (polygon) {
 			return polygon.visualLongitude;
 		}
 		return longitude;
 	})
 
-	var sliderContainer = toolsContainer.createChild(am4core.Container);
+	// END OF MAP	
 
-	sliderContainer.width = am4core.percent(100);
-	sliderContainer.padding(0, 15, 15, 10);
-	sliderContainer.layout = "horizontal";
+	// top title
+	var title = mapChart.titles.create();
+	title.fontSize = "1.5em";
+	title.text = "COVID-19 Spread Data";
+	title.align = "left";
+	title.horizontalCenter = "left";
+	title.marginLeft = 20;
+	title.paddingBottom = 10;
+	title.y = 20;
 
-	var slider = sliderContainer.createChild(am4core.Slider);
-	slider.valign = "middle";
-	slider.background.opacity = 0.4;
-	slider.opacity = 0.7;
-	slider.background.fill = am4core.color("#ffffff");
-	slider.marginLeft = 20;
-	slider.marginRight = 35;
-	slider.height = 15;
-	slider.start = 1;
-	slider.width = am4core.percent(100);
-
-	slider.events.on("rangechanged", function(event) {
-		var index = Math.round((covid_world_timeline.length - 1) * slider.start);
-		updateData(getSlideData(index).list);
-		updateTotals(index);
-	})
-
-	slider.startGrip.events.on("drag", () => {
-		stop();
-		if (sliderAnimation) {
-			sliderAnimation.setProgress(slider.start);
-		}
-	});
-
-	var playButton = sliderContainer.createChild(am4core.PlayButton);
-	playButton.valign = "middle";
-	playButton.events.on("toggled", function(event) {
-		if (event.target.isActive) {
-			play();
-		} else {
-			stop();
-		}
-	})
-
-	function updateTotals(index) {
-		if (!isNaN(index)) {
-			var di = covid_total_timeline[index];
-			var date = new Date(di.date);
-			currentDate = date;
-
-			updateTitle();
-
-			var position = dateAxis.dateToPosition(date);
-			position = dateAxis.toGlobalPosition(position);
-			var x = dateAxis.positionToCoordinate(position);
-			if (casesChart.cursor) {
-				casesChart.cursor.triggerMove({ x: 0, y: 0 }, "soft");
-				casesChart.cursor.triggerMove({ x: x, y: 0 }, "soft");
-			}
-			for (var key in buttons) {
-				buttons[key].label.text = key.toUpperCase() + ": " + casesChart.data[index][key];
-			}
-			currentIndex = index;
-		}
-	}
-
-	function updateData(data) {
-
-
-		imageSeries.dataItems.each(function(dataItem) {
-			dataItem.dataContext.confirmed = 0;
-			dataItem.dataContext.deaths = 0;
-			dataItem.dataContext.recovered = 0;
-			dataItem.dataContext.active = 0;
-		})
-
-		for (var i = 0; i < data.length; i++) {
-			var di = data[i];
-			var image = imageSeries.getImageById(di.id);
-			if (image) {
-				image.dataItem.dataContext.confirmed = di.confirmed;
-				image.dataItem.dataContext.deaths = di.deaths;
-				image.dataItem.dataContext.recovered = di.recovered;
-				image.dataItem.dataContext.active = di.confirmed - di.recovered;
-			}
-		}
-		imageSeries.invalidateRawData();
-	}
-
-	var casesChart = toolsContainer.createChild(am4charts.XYChart);
-
-	casesChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
-	casesChart.leftAxesContainer.layout = "vertical"
-	casesChart.paddingRight = 30;
-	casesChart.paddingLeft = 30;
-	casesChart.maskBullets = false;
-	casesChart.zoomOutButton.disabled = true;
-
-	var dateAxis = casesChart.xAxes.push(new am4charts.DateAxis());
-	dateAxis.renderer.minGridDistance = 50;
-	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
-	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
-	dateAxis.tooltip.label.fontSize = "0.8em";
-
-	casesChart.cursor = new am4charts.XYCursor();
-	casesChart.cursor.behavior = "none";
-	casesChart.cursor.lineY.disabled = true;
-	casesChart.cursor.xAxis = dateAxis;
-	casesChart.legend = new am4charts.Legend();
-	casesChart.legend.parent = casesChart.plotContainer;
-	casesChart.fontSize = "0.8em";
-
-	am4core.getInteraction().body.events.off("down", casesChart.cursor.handleCursorDown, casesChart.cursor)
-	am4core.getInteraction().body.events.off("up", casesChart.cursor.handleCursorUp, casesChart.cursor)
-
-	var valueAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
-	valueAxis.interpolationDuration = 3000;
-	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
-	valueAxis.renderer.baseGrid.disabled = true;
-	valueAxis.tooltip.disabled = true;
-	valueAxis.extraMax = 0.05;
-	valueAxis.renderer.inside = true;
-	valueAxis.renderer.labels.template.verticalCenter = "bottom";
-	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
-
-	var activeSeries = addSeries("active", activeColor);
-	activeSeries.hidden = false;
-	var confirmedSeries = addSeries("confirmed", confirmedColor);
-	var recoveredSeries = addSeries("recovered", recoveredColor);
-	var deathsSeries = addSeries("deaths", deathsColor);
-
-	function addSeries(name, color) {
-		var series = casesChart.series.push(new am4charts.LineSeries())
-		series.dataFields.valueY = name;
-		series.dataFields.dateX = "date";
-		series.name = name.toUpperCase();
-		series.strokeOpacity = 0.5;
-		series.stroke = color;
-		series.maskBullets = false;
-		series.hidden = true;
-		series.hideTooltipWhileZooming = true;
-
-		var bullet = series.bullets.push(new am4charts.CircleBullet());
-		bullet.circle.fillOpacity = 1;
-		bullet.circle.fill = backgroundColor;
-		bullet.circle.radius = 3 * 1.2;
-		bullet.setStateOnChildren = true;
-		var bhs = bullet.states.create("hover");
-
-		var hs = bullet.circle.states.create("hover");
-		hs.properties.fillOpacity = 1;
-		hs.properties.fill = color;
-		hs.properties.scale = 1.2;
-
-		series.tooltip.pointerOrientation = "down";
-		series.tooltip.getStrokeFromObject = true;
-		series.tooltip.getFillFromObject = false;
-		series.tooltip.background.fillOpacity = 0.2;
-		series.tooltip.background.fill = am4core.color("#000000");
-		series.tooltip.dy = -3;
-		series.tooltipText = "{valueY}";
-
-		return series;
-	}
-
-	// buttons
-
-	function addButton(name, color) {
-		var button = buttonsContainer.createChild(am4core.Button)
-		button.label.valign = "middle"
-		button.fontSize = "1.1em";
-		button.background.cornerRadius(30, 30, 30, 30);
-		button.background.strokeOpacity = 0.3
-		button.background.fillOpacity = 0;
-		button.background.stroke = buttonStrokeColor;
-		button.background.padding(2, 5, 2, 5);
-		button.states.create("active");
-		button.setStateOnChildren = true;
-		button.valign = "top";
-
-		var activeHoverState = button.background.states.create("hoverActive");
-		activeHoverState.properties.fillOpacity = 0;
-
-		var circle = new am4core.Circle();
-		circle.radius = 10;
-		circle.fillOpacity = 0.3;
-		circle.fill = buttonStrokeColor;
-		circle.strokeOpacity = 0;
-		circle.valign = "middle";
-		circle.marginRight = 10;
-
-		button.dummyData = name;
-		button.icon = circle;
-
-		var activeState = circle.states.create("active");
-		activeState.properties.fill = color;
-		activeState.properties.fillOpacity = 0.5;
-
-		button.events.on("hit", handleHit);
-
-		return button;
-	}
-
-	function handleHit(event) {
-		selectType(event.target.dummyData);
-	}
-
-	function selectType(name) {
-		var activeButton = buttons[name];
-		activeButton.isActive = true;
-
-		for (var key in buttons) {
-			if (buttons[key] != activeButton) {
-				buttons[key].isActive = false;
-			}
-		}
-
-		imageSeries.dataFields.value = name;
-		imageSeries.invalidateData();
-		imageSeries.mapImages.template.fill = colors[name];
-		imageSeries.mapImages.template.stroke = colors[name];
-		imageSeries.mapImages.template.children.getIndex(0).fill = colors[name];
-
-		var activeSeries = series[name];
-		activeSeries.show();
-
-		for (var key in series) {
-			if (series[key] != activeSeries) {
-				series[key].hide();
-			}
-		}
-
-		imageSeries.heatRules.getIndex(0).maxValue = max[name];
-	}
-
-	var activeButton = addButton("active", activeColor);
-	var confirmedButton = addButton("confirmed", confirmedColor);
-	var recoveredButton = addButton("recovered", recoveredColor);
-	var deathsButton = addButton("deaths", deathsColor);
-
-
-	var buttons = { active: activeButton, confirmed: confirmedButton, recovered: recoveredButton, deaths: deathsButton };
-	var series = { active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries };
-	var colors = { active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor };
-
+	// switch between map and globe
 	var mapGlobeSwitch = mapChart.createChild(am4core.SwitchButton);
 	mapGlobeSwitch.align = "right"
 	mapGlobeSwitch.y = 15;
@@ -538,12 +289,88 @@ am4core.ready(function() {
 		}
 	})
 
-	selectType("active");
+	// buttons & chart container
+	var buttonsAndChartContainer = container.createChild(am4core.Container);
+	buttonsAndChartContainer.layout = "vertical";
+	buttonsAndChartContainer.height = am4core.percent(35); // make this bigger if you want more space for the chart
+	buttonsAndChartContainer.width = am4core.percent(100);
+	buttonsAndChartContainer.valign = "bottom";
 
-	var sliderAnimation;
+	// country name and buttons container
+	var nameAndButtonsContainer = buttonsAndChartContainer.createChild(am4core.Container)
+	nameAndButtonsContainer.width = am4core.percent(100);
+	nameAndButtonsContainer.padding(0, 10, 5, 20);
+	nameAndButtonsContainer.layout = "horizontal";
 
+	// name of a country and date label
+	var countryName = nameAndButtonsContainer.createChild(am4core.Label);
+	countryName.fontSize = "1.4em";
+	countryName.valign = "middle";
+
+	// buttons container (active/confirmed/recovered/deaths)
+	var buttonsContainer = nameAndButtonsContainer.createChild(am4core.Container);
+	buttonsContainer.layout = "grid";
+	buttonsContainer.width = am4core.percent(100);
+	buttonsContainer.x = 10;
+	buttonsContainer.contentAlign = "right";
+
+	// Chart & slider container
+	var chartAndSliderContainer = buttonsAndChartContainer.createChild(am4core.Container);
+	chartAndSliderContainer.layout = "vertical";
+	chartAndSliderContainer.height = am4core.percent(100);
+	chartAndSliderContainer.width = am4core.percent(100);
+	chartAndSliderContainer.background.fill = am4core.color("#000000");
+	chartAndSliderContainer.background = new am4core.RoundedRectangle();
+	chartAndSliderContainer.background.cornerRadius(30, 30, 0, 0)
+	chartAndSliderContainer.background.fillOpacity = 0.15;
+	chartAndSliderContainer.paddingTop = 15;
+	chartAndSliderContainer.paddingBottom = 15;
+
+	// Slider container
+	var sliderContainer = chartAndSliderContainer.createChild(am4core.Container);
+	sliderContainer.width = am4core.percent(100);
+	sliderContainer.padding(0, 15, 15, 10);
+	sliderContainer.layout = "horizontal";
+
+	var slider = sliderContainer.createChild(am4core.Slider);
+	slider.width = am4core.percent(100);
+	slider.valign = "middle";
+	slider.background.opacity = 0.4;
+	slider.opacity = 0.7;
+	slider.background.fill = am4core.color("#ffffff");
+	slider.marginLeft = 20;
+	slider.marginRight = 35;
+	slider.height = 15;
+	slider.start = 1;
+
+	// what to do when slider is dragged
+	slider.events.on("rangechanged", function(event) {
+		var index = Math.round((covid_world_timeline.length - 1) * slider.start);
+		updateMapData(getSlideData(index).list);
+		updateTotals(index);
+	})
+	// stop animation if dragged
+	slider.startGrip.events.on("drag", () => {
+		stop();
+		if (sliderAnimation) {
+			sliderAnimation.setProgress(slider.start);
+		}
+	});
+
+	// play button
+	var playButton = sliderContainer.createChild(am4core.PlayButton);
+	playButton.valign = "middle";
+	// play button behavior
+	playButton.events.on("toggled", function(event) {
+		if (event.target.isActive) {
+			play();
+		} else {
+			stop();
+		}
+	})
+
+	// play behavior
 	function play() {
-
 		if (!sliderAnimation) {
 			sliderAnimation = slider.animate({ property: "start", to: 1, from: 0 }, 50000, am4core.ease.linear).pause();
 			sliderAnimation.events.on("animationended", () => {
@@ -559,17 +386,402 @@ am4core.ready(function() {
 		playButton.isActive = true;
 	}
 
+	// stop behavior
 	function stop() {
 		if (sliderAnimation) {
 			sliderAnimation.pause();
 		}
 		playButton.isActive = false;
+	}	
+
+	// BOTTOM CHART
+	// https://www.amcharts.com/docs/v4/chart-types/xy-chart/
+	var lineChart = chartAndSliderContainer.createChild(am4charts.XYChart);
+	lineChart.fontSize = "0.8em";
+	lineChart.paddingRight = 30;
+	lineChart.paddingLeft = 30;
+	lineChart.maskBullets = false;
+	lineChart.zoomOutButton.disabled = true;
+
+	// make a copy of data as we will be modifying it
+	lineChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
+
+	// date axis
+	// https://www.amcharts.com/docs/v4/concepts/axes/date-axis/
+	var dateAxis = lineChart.xAxes.push(new am4charts.DateAxis());
+	dateAxis.renderer.minGridDistance = 50;
+	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
+	dateAxis.tooltip.label.fontSize = "0.8em";
+
+	// value axis
+	// https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
+	var valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
+	valueAxis.interpolationDuration = 3000;
+	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	valueAxis.renderer.baseGrid.disabled = true;
+	valueAxis.tooltip.disabled = true;
+	//valueAxis.extraMax = 0.05;
+	valueAxis.renderer.inside = true;
+	valueAxis.renderer.labels.template.verticalCenter = "bottom";
+	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
+
+	// cursor
+	// https://www.amcharts.com/docs/v4/concepts/chart-cursor/
+	lineChart.cursor = new am4charts.XYCursor();
+	lineChart.cursor.behavior = "none"; // set zoomX for a zooming possibility
+	lineChart.cursor.lineY.disabled = true;
+	lineChart.cursor.xAxis = dateAxis;
+	// this prevents cursor to move to the clicked location while map is dragged
+	am4core.getInteraction().body.events.off("down", lineChart.cursor.handleCursorDown, lineChart.cursor)
+	am4core.getInteraction().body.events.off("up", lineChart.cursor.handleCursorUp, lineChart.cursor)	
+
+	// legend
+	// https://www.amcharts.com/docs/v4/concepts/legend/	
+	lineChart.legend = new am4charts.Legend();
+	lineChart.legend.parent = lineChart.plotContainer;
+
+	// create series
+	var activeSeries = addSeries("active", activeColor);
+	// active series is visible initially
+	activeSeries.hidden = false;
+
+	var confirmedSeries = addSeries("confirmed", confirmedColor);
+	var recoveredSeries = addSeries("recovered", recoveredColor);
+	var deathsSeries = addSeries("deaths", deathsColor);
+
+	var series = { active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries };
+	// add series
+	function addSeries(name, color) {
+		var series = lineChart.series.push(new am4charts.LineSeries())
+		series.dataFields.valueY = name;
+		series.dataFields.dateX = "date";
+		series.name = capitalizeFirstLetter(name);
+		series.strokeOpacity = 0.6;
+		series.stroke = color;
+		series.maskBullets = false;
+		series.hidden = true;
+		series.hideTooltipWhileZooming = true;
+		// series bullet
+		var bullet = series.bullets.push(new am4charts.CircleBullet());
+
+		// only needed to pass it to circle
+		var bulletHoverState = bullet.states.create("hover");
+		bullet.setStateOnChildren = true;
+
+		bullet.circle.fillOpacity = 1;
+		bullet.circle.fill = backgroundColor;
+		bullet.circle.radius = 3;
+
+		var circleHoverState = bullet.circle.states.create("hover");
+		circleHoverState.properties.fillOpacity = 1;
+		circleHoverState.properties.fill = color;
+		circleHoverState.properties.scale = 1.4;
+
+		// tooltip setup
+		series.tooltip.pointerOrientation = "down";
+		series.tooltip.getStrokeFromObject = true;
+		series.tooltip.getFillFromObject = false;
+		series.tooltip.background.fillOpacity = 0.2;
+		series.tooltip.background.fill = am4core.color("#000000");
+		series.tooltip.dy = -4;
+		series.tooltipText = "{name}: {valueY}";
+
+		return series;
 	}
 
-	/**
-	 * Country/state list
-	 */
+	// BUTTONS
+	// create buttons
+	var activeButton = addButton("active", activeColor);
+	var confirmedButton = addButton("confirmed", confirmedColor);
+	var recoveredButton = addButton("recovered", recoveredColor);
+	var deathsButton = addButton("deaths", deathsColor);
 
+	var buttons = { active: activeButton, confirmed: confirmedButton, recovered: recoveredButton, deaths: deathsButton };
+
+	// add button
+	function addButton(name, color) {
+		var button = buttonsContainer.createChild(am4core.Button)
+		button.label.valign = "middle"
+		button.fontSize = "1.1em";
+		button.background.cornerRadius(30, 30, 30, 30);
+		button.background.strokeOpacity = 0.3
+		button.background.fillOpacity = 0;
+		button.background.stroke = buttonStrokeColor;
+		button.background.padding(2, 5, 2, 5);
+		button.states.create("active");
+		button.setStateOnChildren = true;
+
+		var activeHoverState = button.background.states.create("hoverActive");
+		activeHoverState.properties.fillOpacity = 0;
+
+		var circle = new am4core.Circle();
+		circle.radius = 10;
+		circle.fillOpacity = 0.3;
+		circle.fill = buttonStrokeColor;
+		circle.strokeOpacity = 0;
+		circle.valign = "middle";
+		circle.marginRight = 10;
+		button.icon = circle;
+
+		// save name to dummy data for later use
+		button.dummyData = name;
+
+		var circleActiveState = circle.states.create("active");
+		circleActiveState.properties.fill = color;
+		circleActiveState.properties.fillOpacity = 0.5;
+
+		button.events.on("hit", handleButtonClick);
+
+		return button;
+	}
+
+	// handle button clikc
+	function handleButtonClick(event) {
+		// we saved name to dummy data
+		changeDataType(event.target.dummyData);
+	}
+
+	// change data type (active/confirmed/recovered/deaths)
+	function changeDataType(name) {
+		// make button active
+		var activeButton = buttons[name];
+		activeButton.isActive = true;
+		// make other buttons inactive
+		for (var key in buttons) {
+			if (buttons[key] != activeButton) {
+				buttons[key].isActive = false;
+			}
+		}
+		// tell series new field name
+		bubbleSeries.dataFields.value = name;
+		bubbleSeries.invalidateData();
+		// change color of bubbles
+		// setting colors on mapImage for tooltip colors
+		bubbleSeries.mapImages.template.fill = colors[name];
+		bubbleSeries.mapImages.template.stroke = colors[name];
+		// first child is circle
+		bubbleSeries.mapImages.template.children.getIndex(0).fill = colors[name];
+
+		// show series
+		var activeSeries = series[name];
+		activeSeries.show();
+		// hide other series
+		for (var key in series) {
+			if (series[key] != activeSeries) {
+				series[key].hide();
+			}
+		}
+		// update heat rule's maxValue
+		bubbleSeries.heatRules.getIndex(0).maxValue = max[name];
+	}
+
+	// select a country
+	function selectCountry(mapPolygon) {
+		resetHover();
+		polygonSeries.hideTooltip();
+
+		// if the same country is clicked show world
+		if (currentPolygon == mapPolygon) {
+			currentPolygon.isActive = false;
+			showWorld();
+			return;
+		}
+		// save current polygon
+		currentPolygon = mapPolygon;
+		var countryIndex = countryIndexMap[mapPolygon.dataItem.id];
+		currentCountry = mapPolygon.dataItem.dataContext.name;
+
+		// make others inactive
+		polygonSeries.mapPolygons.each(function(polygon) {
+			polygon.isActive = false;
+		})
+
+		// clear timeout if there is one
+		if (countryDataTimeout) {
+			clearTimeout(countryDataTimeout);
+		}
+		// we delay change of data for better performance (so that data is not changed whil zooming)
+		countryDataTimeout = setTimeout(function() {
+			setCountryData(countryIndex);
+		}, 1000); // you can adjust number, 1000 is one second
+
+		updateTotals(currentIndex);
+		updateCountryName();
+
+		mapPolygon.isActive = true;
+		// meaning it's globe
+		if (mapGlobeSwitch.isActive) {
+			// animate deltas (results the map to be rotated to the selected country)
+			if (mapChart.zoomLevel != 1) {
+				mapChart.goHome();
+				rotateAndZoom(mapPolygon);
+			}
+			else {
+				rotateAndZoom(mapPolygon);
+			}
+
+		}
+		// if it's not a globe, simply zoom to the country
+		else {
+			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
+		}
+	}
+
+	// change line chart data to the selected countries	
+	function setCountryData(countryIndex) {
+		// instead of setting whole data array, we modify current raw data so that a nice animation would happen
+		for (var i = 0; i < lineChart.data.length; i++) {
+			var di = covid_world_timeline[i].list;
+
+			var countryData = di[countryIndex];
+			var dataContext = lineChart.data[i];
+			if (countryData) {
+				dataContext.recovered = countryData.recovered;
+				dataContext.confirmed = countryData.confirmed;
+				dataContext.deaths = countryData.deaths;
+				dataContext.active = countryData.confirmed - countryData.recovered;
+				valueAxis.min = undefined;
+				valueAxis.max = undefined;
+			}
+			else {
+				dataContext.recovered = 0;
+				dataContext.confirmed = 0;
+				dataContext.deaths = 0;
+				dataContext.active = 0;
+				valueAxis.min = 0;
+				valueAxis.max = 10;
+			}
+		}
+		lineChart.invalidateRawData();
+	}
+
+	// what happens when a country is rolled-over
+	function rollOverCountry(mapPolygon) {
+
+		resetHover();
+		mapPolygon.isHover = true;
+		// make bubble hovered too
+		var image = bubbleSeries.getImageById(mapPolygon.dataItem.id);
+		if (image) {
+			image.isHover = true;
+		}
+	}
+	// what happens when a country is rolled-out
+	function rollOutCountry(mapPolygon) {
+		var image = bubbleSeries.getImageById(mapPolygon.dataItem.id)
+		resetHover();
+		if (image) {
+			image.isHover = false;
+		}
+	}
+
+	// rotate and zoom
+	function rotateAndZoom(mapPolygon) {
+		polygonSeries.hideTooltip();
+		var animation = mapChart.animate([{ property: "deltaLongitude", to: -mapPolygon.visualLongitude }, { property: "deltaLatitude", to: -mapPolygon.visualLatitude }], 1000)
+		animation.events.on("animationended", function() {
+			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
+		})
+	}
+
+	// calculate zoom level (default is too close)
+	function getZoomLevel(mapPolygon) {
+		var w = mapPolygon.polygon.bbox.width;
+		var h = mapPolygon.polygon.bbox.width;
+		// change 2 to smaller walue for a more close zoom
+		return Math.min(mapChart.seriesWidth / (w * 2), mapChart.seriesHeight / (h * 2))
+	}
+
+	// show world data
+	function showWorld() {
+		currentCountry = "World";
+		resetHover();
+
+		// make all inactive
+		polygonSeries.mapPolygons.each(function(polygon) {
+			polygon.isActive = false;
+		})
+
+		updateTotals(currentIndex);
+		updateCountryName();
+
+		// update line chart data (again, modifying instead of setting new data for a nice animation)
+		for (var i = 0; i < lineChart.data.length; i++) {
+			var di = covid_total_timeline[i];
+			var dataContext = lineChart.data[i];
+
+			dataContext.recovered = di.recovered;
+			dataContext.confirmed = di.confirmed;
+			dataContext.deaths = di.deaths;
+			dataContext.active = di.confirmed - di.recovered;
+			valueAxis.min = undefined;
+			valueAxis.max = undefined;
+		}
+
+		lineChart.invalidateRawData();
+		mapChart.goHome();
+	}
+
+	// updates country name and date
+	function updateCountryName() {
+		countryName.text = currentCountry + ", " + mapChart.dateFormatter.format(currentDate, "MMM dd, yyyy");
+	}
+
+	// update total values in buttons
+	function updateTotals(index) {
+		if (!isNaN(index)) {
+			var di = covid_total_timeline[index];
+			var date = new Date(di.date);
+			currentDate = date;
+
+			updateCountryName();
+
+			var position = dateAxis.dateToPosition(date);
+			position = dateAxis.toGlobalPosition(position);
+			var x = dateAxis.positionToCoordinate(position);
+			if (lineChart.cursor) {
+				lineChart.cursor.triggerMove({ x: 0, y: 0 }, "soft");
+				lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft");
+			}
+			for (var key in buttons) {
+				buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.data[index][key];
+			}
+			currentIndex = index;
+		}
+	}
+
+	// update map data
+	function updateMapData(data) {
+		//modifying instead of setting new data for a nice animation
+		bubbleSeries.dataItems.each(function(dataItem) {
+			dataItem.dataContext.confirmed = 0;
+			dataItem.dataContext.deaths = 0;
+			dataItem.dataContext.recovered = 0;
+			dataItem.dataContext.active = 0;
+		})
+
+		for (var i = 0; i < data.length; i++) {
+			var di = data[i];
+			var image = bubbleSeries.getImageById(di.id);
+			if (image) {
+				image.dataItem.dataContext.confirmed = di.confirmed;
+				image.dataItem.dataContext.deaths = di.deaths;
+				image.dataItem.dataContext.recovered = di.recovered;
+				image.dataItem.dataContext.active = di.confirmed - di.recovered;
+			}
+		}
+		bubbleSeries.invalidateRawData();
+	}
+
+	function capitalizeFirstLetter(string) {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
+
+	/**
+	 * Country/state list on the right
+	 */
 	function populateCountries(list) {
 		var table = $("#areas tbody");
 		table.find(".area").remove();
@@ -594,8 +806,6 @@ am4core.ready(function() {
 			.draw();;
 	}
 
-	populateCountries(slideData.list);
-
 	function handleCountryHit(event) {
 		selectCountry(event.target);
 	}
@@ -608,177 +818,19 @@ am4core.ready(function() {
 		rollOutCountry(event.target);
 	}
 
-	var currentPolygon;
-
-
 	function resetHover() {
 		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isHover = false;
 		})
 
-		imageSeries.mapImages.each(function(image) {
+		bubbleSeries.mapImages.each(function(image) {
 			image.isHover = false;
 		})
-	}
+	}	
 
-	var countryDataTimeout;
-
-
-	function selectCountry(mapPolygon) {
-
-		resetHover();
-
-		polygonSeries.hideTooltip();
-
-		if (currentPolygon == mapPolygon) {
-			currentPolygon.isActive = false;
-			showWorld();
-			return;
-		}
-
-
-
-		polygonSeries.mapPolygons.each(function(polygon) {
-			polygon.isActive = false;
-			polygon.isHover = false;
-		})
-
-		currentPolygon = mapPolygon;
-
-		var chartData = [];
-		var countryIndex = countryIndexMap[mapPolygon.dataItem.id];
-
-		if(countryDataTimeout){
-			clearTimeout(countryDataTimeout);
-		}
-		countryDataTimeout = setTimeout(function() {
-			setCountryData(countryIndex);
-		}, 1500)
-
-		updateTotals(currentIndex);
-
-		currentCountry = mapPolygon.dataItem.dataContext.name;
-		updateTitle();
-
-		mapPolygon.isActive = true;
-		// meaning it's globe
-		if (mapGlobeSwitch.isActive) {
-			// animate deltas
-			if (mapChart.zoomLevel != 1) {
-				var zoomOutAnimation = mapChart.goHome();
-				if (zoomOutAnimation) {
-					zoomOutAnimation.events.on("animationended", function() {
-						rotateAndZoom(mapPolygon);
-					});
-				}
-				else {
-					rotateAndZoom(mapPolygon);
-				}
-			}
-			else {
-				rotateAndZoom(mapPolygon);
-			}
-
-		}
-		else {
-			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
-		}
-	}
-
-	function setCountryData(countryIndex) {
-		for (var i = 0; i < casesChart.data.length; i++) {
-			var di = covid_world_timeline[i].list;
-
-			var countryData = di[countryIndex];
-			var dataContext = casesChart.data[i];
-			if (countryData) {
-				dataContext.recovered = countryData.recovered;
-				dataContext.confirmed = countryData.confirmed;
-				dataContext.deaths = countryData.deaths;
-				dataContext.active = countryData.confirmed - countryData.recovered;
-				valueAxis.min = undefined;
-				valueAxis.max = undefined;
-			}
-			else {
-				dataContext.recovered = 0;
-				dataContext.confirmed = 0;
-				dataContext.deaths = 0;
-				dataContext.active = 0;
-				valueAxis.min = 0;
-				valueAxis.max = 10;
-			}
-		}
-		casesChart.invalidateRawData();
-
-	}
-
-
-	function rollOverCountry(mapPolygon) {
-
-		resetHover();
-		mapPolygon.isHover = true;
-
-
-		var image = imageSeries.getImageById(mapPolygon.dataItem.id);
-
-		if (image) {
-			image.isHover = true;
-		}
-	}
-
-	function rollOutCountry(mapPolygon) {
-		var image = imageSeries.getImageById(mapPolygon.dataItem.id)
-		resetHover();
-		if (image) {
-			image.isHover = false;
-		}
-	}
-
-	function rotateAndZoom(mapPolygon) {
-		polygonSeries.hideTooltip();
-		var animation = mapChart.animate([{ property: "deltaLongitude", to: -mapPolygon.visualLongitude }, { property: "deltaLatitude", to: -mapPolygon.visualLatitude }], 1000)
-		animation.events.on("animationended", function() {
-			mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
-		})
-	}
-
-
-	function getZoomLevel(mapPolygon) {
-		var w = mapPolygon.polygon.bbox.width;
-		var h = mapPolygon.polygon.bbox.width;
-
-		return Math.min(mapChart.seriesWidth / (w * 2), mapChart.seriesHeight / (h * 2))
-	}
-
-	function showWorld() {
-		
-		currentCountry = "World";
-
-		resetHover();
-
-		polygonSeries.mapPolygons.each(function(polygon) {
-			polygon.isActive = false;
-			polygon.isHover = false;
-		})
-
-		updateTotals(currentIndex);
-		updateTitle();
-
-		for (var i = 0; i < casesChart.data.length; i++) {
-			var di = covid_total_timeline[i];
-			var dataContext = casesChart.data[i];
-
-			dataContext.recovered = di.recovered;
-			dataContext.confirmed = di.confirmed;
-			dataContext.deaths = di.deaths;
-			dataContext.active = di.confirmed - di.recovered;
-			valueAxis.min = undefined;
-			valueAxis.max = undefined;
-		}
-
-		casesChart.invalidateRawData();
-
-		mapChart.goHome();
-	}
+	// set initial data and names
+	populateCountries(slideData.list);
+	updateCountryName();
+	changeDataType("active");	
 
 });
