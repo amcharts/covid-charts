@@ -44,8 +44,7 @@ am4core.ready(function() {
 	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
 	var currentDate = lastDate;
 
-	function updateTitle() {
-		title.text = "COVID-19";
+	function updateTitle() {		
 		countryTitle.text = currentCountry + ", " + mapChart.dateFormatter.format(currentDate, "MMM dd, yyyy");
 	}
 
@@ -94,6 +93,7 @@ am4core.ready(function() {
 
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
+	title.text = "COVID-19 Spread Data";
 	title.align = "left";
 
 	title.horizontalCenter = "left";
@@ -228,7 +228,7 @@ am4core.ready(function() {
 	imageSeries.tooltip.background.fill = am4core.color("#000000");
 
 	var imageTemplate = imageSeries.mapImages.template;
-	imageTemplate.interactionsDisbaled = true;
+	imageTemplate.interactionsEnabled = false;
 	imageTemplate.nonScaling = true;
 	imageTemplate.states.create("hover");
 	imageTemplate.strokeOpacity = 0;
