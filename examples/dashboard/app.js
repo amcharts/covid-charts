@@ -25,6 +25,7 @@ am4core.ready(function() {
 
 	var buttonStrokeColor = am4core.color("#ffffff");
 	var currentIndex;
+	var currentCountry = "World";
 
 	var countryIndexMap = {};
 
@@ -43,8 +44,9 @@ am4core.ready(function() {
 	var lastDate = new Date(covid_total_timeline[covid_total_timeline.length - 1].date);
 	var currentDate = lastDate;
 
-	function getTitle(name) {
-		return "COVID-19, " + name + ", " + mapChart.dateFormatter.format(currentDate, "dd MMM, yyyy");
+	function updateTitle() {
+		title.text = "COVID-19";
+		countryTitle.text = currentCountry + ", " + mapChart.dateFormatter.format(currentDate, "MMM dd, yyyy");
 	}
 
 	// function that returns current slide
@@ -74,12 +76,7 @@ am4core.ready(function() {
 
 	// you can adjust layout
 
-	var buttonsContainer = container.createChild(am4core.Container);
-	buttonsContainer.layout = "grid";
-	buttonsContainer.width = am4core.percent(90);
-	buttonsContainer.x = 10;
-	buttonsContainer.y = 15;
-	buttonsContainer.zIndex = 1000;
+
 
 	// Create map instance
 	var mapChart = container.createChild(am4maps.MapChart);
@@ -91,20 +88,18 @@ am4core.ready(function() {
 	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
 	mapChart.height = am4core.percent(80);
 	mapChart.zoomEasing = am4core.ease.sinOut;
-	mapChart.seriesContainer.events.on("hit", showWorld);
+	mapChart.seriesContainer.background.fillOpacity = 0;
+	mapChart.seriesContainer.background.events.on("hit", showWorld);
 
 
 	var title = mapChart.titles.create();
 	title.fontSize = "1.4em";
-	title.verticalCenter = "bottom";
-	title.adapter.add("y", function(y, target) {
-		return toolsContainer.pixelY;
-	});
 	title.align = "left";
-	title.text = getTitle("World");
+
 	title.horizontalCenter = "left";
 	title.marginLeft = 20;
 	title.paddingBottom = 10;
+	title.y = 20;
 
 	var toolsContainer = container.createChild(am4core.Container);
 	toolsContainer.layout = "vertical";
@@ -118,6 +113,34 @@ am4core.ready(function() {
 	toolsContainer.paddingTop = 15;
 	toolsContainer.paddingBottom = 15;
 
+	var titleAndButtonsContainer = container.createChild(am4core.Container)
+	titleAndButtonsContainer.width = am4core.percent(100);
+	titleAndButtonsContainer.padding(0,10,5,20);
+
+	titleAndButtonsContainer.adapter.add("y", function(y, target){
+		return container.pixelHeight - toolsContainer.pixelHeight
+	})
+
+	titleAndButtonsContainer.verticalCenter = "bottom";
+	titleAndButtonsContainer.layout = "horizontal";
+
+	var countryTitle = titleAndButtonsContainer.createChild(am4core.Label);
+	countryTitle.fontSize = "1.4em";
+	countryTitle.valign = "middle";
+
+	var buttonsContainer = titleAndButtonsContainer.createChild(am4core.Container);
+	buttonsContainer.layout = "grid";
+	buttonsContainer.width = am4core.percent(100);
+	buttonsContainer.x = 10;
+	buttonsContainer.contentAlign = "right";
+	
+	buttonsContainer.zIndex = 1000;
+
+
+
+
+
+	updateTitle();	
 
 	var slideData = getSlideData();
 	// as we will be modifying, make a copy
@@ -161,12 +184,10 @@ am4core.ready(function() {
 
 	var polygonTemplate = polygonSeries.mapPolygons.template;
 	polygonTemplate.fill = am4core.color("#3b3b3b");
-	polygonTemplate.fillOpacity = 0.4
+	polygonTemplate.fillOpacity = 1
 	polygonTemplate.stroke = am4core.color("#000000");
 	polygonTemplate.strokeOpacity = 0.15
 	polygonTemplate.setStateOnChildren = true;
-	polygonTemplate.states.create("hover")
-	polygonTemplate.states.create("active")
 
 	polygonTemplate.events.on("hit", handleCountryHit);
 	polygonTemplate.events.on("over", handleCountryOver);
@@ -175,15 +196,17 @@ am4core.ready(function() {
 
 
 	var hs = polygonTemplate.states.create("hover")
-	hs.properties.fill = am4core.color("#000000")
+	hs.properties.fill = am4core.color("#1b1b1b")
 
 	var polygonHoverState = polygonTemplate.states.create("active")
-	polygonHoverState.properties.fill = am4core.color("#000000")
+	polygonHoverState.properties.fill = am4core.color("#0f0f0f")
 
 	var imageSeries = mapChart.series.push(new am4maps.MapImageSeries());
 	imageSeries.data = mapData;
 	imageSeries.dataFields.value = "confirmed";
 	imageSeries.dataFields.id = "id";
+	imageSeries.tooltip.animationDuration = 0;
+	imageSeries.tooltip.showInViewport = false;
 
 	imageSeries.events.on("dataitemsvalidated", function() {
 		imageSeries.dataItems.each((dataItem) => {
@@ -205,6 +228,7 @@ am4core.ready(function() {
 	imageSeries.tooltip.background.fill = am4core.color("#000000");
 
 	var imageTemplate = imageSeries.mapImages.template;
+	imageTemplate.interactionsDisbaled = true;
 	imageTemplate.nonScaling = true;
 	imageTemplate.states.create("hover");
 	imageTemplate.strokeOpacity = 0;
@@ -218,16 +242,6 @@ am4core.ready(function() {
 
 	var imageHoverState = imageTemplate.states.create("hover");
 	imageHoverState.properties.fillOpacity = 1;
-
-	// adjust heat rule if zoomed
-	mapChart.events.on("zoomlevelchanged", function(event) {
-		/*
-		imageSeries.heatRules.getIndex(0).min = 3 * (1 / mapChart.zoomLevel);
-		imageSeries.heatRules.getIndex(0).max = 30 * mapChart.zoomLevel;
-		imageSeries.dataItems.each(function(dataItem) {
-			dataItem.dispatch("calculatedvaluechanged");
-		})*/
-	})
 
 	//imageTemplate.hiddenState.properties.opacity = 0;
 	circle.hiddenState.properties.scale = 0.0001;
@@ -304,6 +318,10 @@ am4core.ready(function() {
 		if (!isNaN(index)) {
 			var di = covid_total_timeline[index];
 			var date = new Date(di.date);
+			currentDate = date;
+
+			updateTitle();
+
 			var position = dateAxis.dateToPosition(date);
 			position = dateAxis.toGlobalPosition(position);
 			var x = dateAxis.positionToCoordinate(position);
@@ -319,6 +337,8 @@ am4core.ready(function() {
 	}
 
 	function updateData(data) {
+
+
 		imageSeries.dataItems.each(function(dataItem) {
 			dataItem.dataContext.confirmed = 0;
 			dataItem.dataContext.deaths = 0;
@@ -341,7 +361,7 @@ am4core.ready(function() {
 
 	var casesChart = toolsContainer.createChild(am4charts.XYChart);
 
-	casesChart.data = covid_total_timeline;
+	casesChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
 	casesChart.leftAxesContainer.layout = "vertical"
 	casesChart.paddingRight = 30;
 	casesChart.paddingLeft = 30;
@@ -354,7 +374,7 @@ am4core.ready(function() {
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
 
-	casesChart.cursor = new am4charts.XYCursor();	
+	casesChart.cursor = new am4charts.XYCursor();
 	casesChart.cursor.behavior = "none";
 	casesChart.cursor.lineY.disabled = true;
 	casesChart.cursor.xAxis = dateAxis;
@@ -366,6 +386,7 @@ am4core.ready(function() {
 	am4core.getInteraction().body.events.off("up", casesChart.cursor.handleCursorUp, casesChart.cursor)
 
 	var valueAxis = casesChart.yAxes.push(new am4charts.ValueAxis());
+	valueAxis.interpolationDuration = 3000;
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
@@ -413,7 +434,6 @@ am4core.ready(function() {
 
 		return series;
 	}
-
 
 	// buttons
 
@@ -601,6 +621,8 @@ am4core.ready(function() {
 		})
 	}
 
+	var countryDataTimeout;
+
 
 	function selectCountry(mapPolygon) {
 
@@ -616,7 +638,7 @@ am4core.ready(function() {
 
 
 
-		polygonSeries.mapPolygons.each(function(polygon){
+		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
 			polygon.isHover = false;
 		})
@@ -625,29 +647,18 @@ am4core.ready(function() {
 
 		var chartData = [];
 		var countryIndex = countryIndexMap[mapPolygon.dataItem.id];
-		if (am4core.type.hasValue(countryIndex)) {
 
-			for (var i = 0; i < casesChart.data.length; i++) {
-				var di = covid_world_timeline[i].list;
-
-				var countryData = di[countryIndex];
-				if (countryData) {
-
-					var dataContext = casesChart.data[i];
-
-					dataContext.recovered = countryData.recovered;
-					dataContext.confirmed = countryData.confirmed;
-					dataContext.deaths = countryData.deaths;
-					dataContext.active = countryData.confirmed - countryData.recovered;
-				}
-			}
-
-			casesChart.invalidateRawData();
-
-			updateTotals(currentIndex);
+		if(countryDataTimeout){
+			clearTimeout(countryDataTimeout);
 		}
+		countryDataTimeout = setTimeout(function() {
+			setCountryData(countryIndex);
+		}, 1500)
 
-		title.text = getTitle(mapPolygon.dataItem.dataContext.name);
+		updateTotals(currentIndex);
+
+		currentCountry = mapPolygon.dataItem.dataContext.name;
+		updateTitle();
 
 		mapPolygon.isActive = true;
 		// meaning it's globe
@@ -655,9 +666,14 @@ am4core.ready(function() {
 			// animate deltas
 			if (mapChart.zoomLevel != 1) {
 				var zoomOutAnimation = mapChart.goHome();
-				zoomOutAnimation.events.on("animationended", function() {
+				if (zoomOutAnimation) {
+					zoomOutAnimation.events.on("animationended", function() {
+						rotateAndZoom(mapPolygon);
+					});
+				}
+				else {
 					rotateAndZoom(mapPolygon);
-				});
+				}
 			}
 			else {
 				rotateAndZoom(mapPolygon);
@@ -669,10 +685,39 @@ am4core.ready(function() {
 		}
 	}
 
+	function setCountryData(countryIndex) {
+		for (var i = 0; i < casesChart.data.length; i++) {
+			var di = covid_world_timeline[i].list;
+
+			var countryData = di[countryIndex];
+			var dataContext = casesChart.data[i];
+			if (countryData) {
+				dataContext.recovered = countryData.recovered;
+				dataContext.confirmed = countryData.confirmed;
+				dataContext.deaths = countryData.deaths;
+				dataContext.active = countryData.confirmed - countryData.recovered;
+				valueAxis.min = undefined;
+				valueAxis.max = undefined;
+			}
+			else {
+				dataContext.recovered = 0;
+				dataContext.confirmed = 0;
+				dataContext.deaths = 0;
+				dataContext.active = 0;
+				valueAxis.min = 0;
+				valueAxis.max = 10;
+			}
+		}
+		casesChart.invalidateRawData();
+
+	}
+
+
 	function rollOverCountry(mapPolygon) {
 
 		resetHover();
 		mapPolygon.isHover = true;
+
 
 		var image = imageSeries.getImageById(mapPolygon.dataItem.id);
 
@@ -706,16 +751,34 @@ am4core.ready(function() {
 	}
 
 	function showWorld() {
-		resetHover();
+		
+		currentCountry = "World";
 
-		title.text = getTitle("World");
+		resetHover();
 
 		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
 			polygon.isHover = false;
 		})
 
-		mapChart.goHome();		
+		updateTotals(currentIndex);
+		updateTitle();
+
+		for (var i = 0; i < casesChart.data.length; i++) {
+			var di = covid_total_timeline[i];
+			var dataContext = casesChart.data[i];
+
+			dataContext.recovered = di.recovered;
+			dataContext.confirmed = di.confirmed;
+			dataContext.deaths = di.deaths;
+			dataContext.active = di.confirmed - di.recovered;
+			valueAxis.min = undefined;
+			valueAxis.max = undefined;
+		}
+
+		casesChart.invalidateRawData();
+
+		mapChart.goHome();
 	}
 
 });
