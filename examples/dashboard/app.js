@@ -299,7 +299,7 @@ am4core.ready(function() {
 	// buttons & chart container
 	var buttonsAndChartContainer = container.createChild(am4core.Container);
 	buttonsAndChartContainer.layout = "vertical";
-	buttonsAndChartContainer.height = am4core.percent(35); // make this bigger if you want more space for the chart
+	buttonsAndChartContainer.height = am4core.percent(38); // make this bigger if you want more space for the chart
 	buttonsAndChartContainer.width = am4core.percent(100);
 	buttonsAndChartContainer.valign = "bottom";
 
