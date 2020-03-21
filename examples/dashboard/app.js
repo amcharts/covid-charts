@@ -196,7 +196,6 @@ am4core.ready(function() {
 	bubbleSeries.tooltip.background.fill = am4core.color("#000000");
 
 	var imageTemplate = bubbleSeries.mapImages.template;
-	imageTemplate.interactionsEnabled = false;
 	// if you want bubbles to become bigger when zoomed, set this to false
 	imageTemplate.nonScaling = true;
 	imageTemplate.strokeOpacity = 0;
@@ -206,6 +205,10 @@ am4core.ready(function() {
 	imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
 		return -target.children.getIndex(0).radius;
 	})
+
+	imageTemplate.events.on("over", handleImageOver);
+	imageTemplate.events.on("out", handleImageOut);
+	imageTemplate.events.on("hit", handleImageHit);
 
 	// When hovered, circles become non-opaque	
 	var imageHoverState = imageTemplate.states.create("hover");
@@ -672,7 +675,7 @@ am4core.ready(function() {
 		}
 
 		lineChart.invalidateRawData();
-
+		updateTotals(currentIndex);
 		setTimeout(updateSeriesTooltip, 2000);
 	}
 
@@ -729,14 +732,18 @@ am4core.ready(function() {
 	// show world data
 	function showWorld() {
 		currentCountry = "World";
+		currentPolygon = undefined;
 		resetHover();
+
+		if(countryDataTimeout){
+			clearTimeout(countryDataTimeout);
+		}
 
 		// make all inactive
 		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
 		})
-
-		updateTotals(currentIndex);
+		
 		updateCountryName();
 
 		// update line chart data (again, modifying instead of setting new data for a nice animation)
@@ -753,6 +760,8 @@ am4core.ready(function() {
 		}
 
 		lineChart.invalidateRawData();
+
+		updateTotals(currentIndex);
 		mapChart.goHome();
 	}
 
@@ -839,6 +848,19 @@ am4core.ready(function() {
 			.order("desc")
 			.draw();;
 	}
+
+
+	function handleImageOver(event) {
+		rollOverCountry(polygonSeries.getPolygonById(event.target.dataItem.id));
+	}
+
+	function handleImageOut(event) {
+		rollOutCountry(polygonSeries.getPolygonById(event.target.dataItem.id));
+	}
+
+	function handleImageHit(event) {
+		selectCountry(polygonSeries.getPolygonById(event.target.dataItem.id));
+	}		
 
 	function handleCountryHit(event) {
 		selectCountry(event.target);
