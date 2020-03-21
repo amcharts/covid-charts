@@ -6,6 +6,12 @@ If you are a news agency, online publisher, or simple blogger, you can use these
 ## Important disclaimer
 WE DO NOT GUARANTEE ACCURACY OF THE DATA. PLEASE USE IT AS A VISUAL AID ONLY, AND DO NOT BASE ANY DECISION MEDICAL OR LOGISTICAL BASED ON THE DATA PROVIDED IN THESE CHARTS OR DATA FILES.
 
+Treat the data included here as a sample data, which might be (and probably is) NOT up-to-date and contain (and probably does) contain some calculational errors, especially in historical numbers.
+
+Please note that statistics collection, especially in early days of pandemic was erratic, patchy, and not systemized.
+
+Feel free to modify examples to use your own data instead.
+
 ## Examples
 Example dashboard is posted [here](https://covid.amcharts.com).
 
