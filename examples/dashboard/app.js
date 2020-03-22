@@ -251,10 +251,11 @@ am4core.ready(function() {
 	imageTemplate.adapter.add("latitude", function(latitude, target) {
 		var polygon = polygonSeries.getPolygonById(target.dataItem.id);
 		if (polygon) {
+			target.disabled = false;
 			return polygon.visualLatitude;
 		}
 		else {
-			target.hide(0)
+			target.disabled = true;
 		}
 		return latitude;
 	})
@@ -262,10 +263,11 @@ am4core.ready(function() {
 	imageTemplate.adapter.add("longitude", function(longitude, target) {
 		var polygon = polygonSeries.getPolygonById(target.dataItem.id);
 		if (polygon) {
+			target.disabled = false;
 			return polygon.visualLongitude;
 		}
 		else {
-			target.hide(0)
+			target.disabled = true;
 		}
 		return longitude;
 	})
