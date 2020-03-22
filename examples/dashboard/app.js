@@ -253,6 +253,9 @@ am4core.ready(function() {
 		if (polygon) {
 			return polygon.visualLatitude;
 		}
+		else {
+			target.hide(0)
+		}
 		return latitude;
 	})
 
@@ -260,6 +263,9 @@ am4core.ready(function() {
 		var polygon = polygonSeries.getPolygonById(target.dataItem.id);
 		if (polygon) {
 			return polygon.visualLongitude;
+		}
+		else {
+			target.hide(0)
 		}
 		return longitude;
 	})
@@ -431,6 +437,8 @@ am4core.ready(function() {
 	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
+	dateAxis.tooltip.background.fill = activeColor;
+	dateAxis.tooltip.background.stroke = activeColor;	
 
 	// value axis
 	// https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
@@ -449,6 +457,7 @@ am4core.ready(function() {
 	lineChart.cursor = new am4charts.XYCursor();
 	lineChart.cursor.behavior = "none"; // set zoomX for a zooming possibility
 	lineChart.cursor.lineY.disabled = true;
+	lineChart.cursor.lineX.stroke = activeColor;
 	lineChart.cursor.xAxis = dateAxis;
 	// this prevents cursor to move to the clicked location while map is dragged
 	am4core.getInteraction().body.events.off("down", lineChart.cursor.handleCursorDown, lineChart.cursor)
@@ -735,7 +744,7 @@ am4core.ready(function() {
 		currentPolygon = undefined;
 		resetHover();
 
-		if(countryDataTimeout){
+		if (countryDataTimeout) {
 			clearTimeout(countryDataTimeout);
 		}
 
@@ -743,7 +752,7 @@ am4core.ready(function() {
 		polygonSeries.mapPolygons.each(function(polygon) {
 			polygon.isActive = false;
 		})
-		
+
 		updateCountryName();
 
 		// update line chart data (again, modifying instead of setting new data for a nice animation)
@@ -860,7 +869,7 @@ am4core.ready(function() {
 
 	function handleImageHit(event) {
 		selectCountry(polygonSeries.getPolygonById(event.target.dataItem.id));
-	}		
+	}
 
 	function handleCountryHit(event) {
 		selectCountry(event.target);
