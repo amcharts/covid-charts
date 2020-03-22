@@ -206,6 +206,12 @@ am4core.ready(function() {
 		return -target.children.getIndex(0).radius;
 	})
 
+	//imageTemplate.applyOnClones = true;
+	//mapChart.events.on("zoomlevelchanged", function(){
+		//imageTemplate.scale = 1 / (1 + (mapChart.zoomLevel - 1) / 2);
+	//})
+	
+
 	imageTemplate.events.on("over", handleImageOver);
 	imageTemplate.events.on("out", handleImageOut);
 	imageTemplate.events.on("hit", handleImageHit);
@@ -676,7 +682,7 @@ am4core.ready(function() {
 				dataContext.recovered = countryData.recovered;
 				dataContext.confirmed = countryData.confirmed;
 				dataContext.deaths = countryData.deaths;
-				dataContext.active = countryData.confirmed - countryData.recovered;
+				dataContext.active = countryData.confirmed - countryData.recovered - countryData.deaths;
 				valueAxis.min = undefined;
 				valueAxis.max = undefined;
 			}
@@ -826,7 +832,7 @@ am4core.ready(function() {
 				image.dataItem.dataContext.confirmed = di.confirmed;
 				image.dataItem.dataContext.deaths = di.deaths;
 				image.dataItem.dataContext.recovered = di.recovered;
-				image.dataItem.dataContext.active = di.confirmed - di.recovered;
+				image.dataItem.dataContext.active = di.confirmed - di.recovered - di.deaths;
 			}
 		}
 		bubbleSeries.invalidateRawData();
