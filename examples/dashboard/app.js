@@ -490,6 +490,7 @@ am4core.ready(function() {
 		series.strokeOpacity = 0.6;
 		series.stroke = color;
 		series.maskBullets = false;
+		series.minBulletDistance = 10;
 		series.hidden = true;
 		series.hideTooltipWhileZooming = true;
 		// series bullet
@@ -501,7 +502,7 @@ am4core.ready(function() {
 
 		bullet.circle.fillOpacity = 1;
 		bullet.circle.fill = backgroundColor;
-		bullet.circle.radius = 3;
+		bullet.circle.radius = 2;
 
 		var circleHoverState = bullet.circle.states.create("hover");
 		circleHoverState.properties.fillOpacity = 1;
