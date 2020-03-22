@@ -30,7 +30,9 @@ Data files located in this repo are not copies of the original source files but 
 If you notice any irregularities, please do let us know by opening an [issue](https://github.com/amcharts/covid-charts/issues).
 
 ### Update frequency
-Data update frequency is once a day. No set time.
+Since 2020-03-22 data is being updated several times a day and is generally more up-to-date.
+
+We're currently working on an automated process to bring hourly updates.
 
 ## Files
 We have a request: please download and put all the files required for displaying the charts on your websites. Due to high demand for this kind of information, it might put a huge load on our servers, something they might not be able to handle. We're giving this away for free, please help us by easing the load.
