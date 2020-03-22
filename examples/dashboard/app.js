@@ -594,6 +594,10 @@ am4core.ready(function() {
 		// first child is circle
 		bubbleSeries.mapImages.template.children.getIndex(0).fill = colors[name];
 
+		dateAxis.tooltip.background.fill = colors[name];
+		dateAxis.tooltip.background.stroke = colors[name];			
+		lineChart.cursor.lineX.stroke = colors[name];
+
 		// show series
 		var activeSeries = series[name];
 		activeSeries.show();
