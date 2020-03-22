@@ -20,6 +20,8 @@ Both chart templates and data provided AS IS. Take it, fork it, modify it, use i
 
 No attribution to amCharts is required.
 
+We provide charts and data. We DO NOT provide hosting. So please, people, grab and put those charts on your own server. Don't load individual files or the whole example dashboard off our demo server.
+
 ## Data
 ### Source
 The data files, used in this repository are derived from [this repository](https://github.com/CSSEGISandData/COVID-19); copyright 2020 Johns Hopkins University. Make sure your intended usage adheres to their terms of use.
