@@ -29,6 +29,10 @@ The data files, used in this repository are derived from [this repository](https
 ### Accuracy
 Data files located in this repo are not copies of the original source files but rather aggregated data. We did our best to aggregate the timeline data, which is often fragmented, collected in different manner over time, and contains some other curiosities. Think passengers on cruise ships being attributed to either their countries of residence, or the country they were docked in. Or U.S. collecting case data per city, then moving on to state-wide data over time.
 
+### Current day
+The global data is collected from a lot of local sources, which update at irregular intervals and delays. This means that the data for current day may be (and probably is) incomplete and will be updated as new data comes in from world regions.
+
+### Data irregularities
 If you notice any irregularities, please do let us know by opening an [issue](https://github.com/amcharts/covid-charts/issues).
 
 ### Update frequency
