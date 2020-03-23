@@ -202,15 +202,10 @@ am4core.ready(function() {
 	imageTemplate.fillOpacity = 0.5;
 	imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
 	// this is needed for the tooltip to point to the top of the circle instead of the middle
-	imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
-		return -target.children.getIndex(0).radius;
-	})
-
-	//imageTemplate.applyOnClones = true;
-	//mapChart.events.on("zoomlevelchanged", function(){
-		//imageTemplate.scale = 1 / (1 + (mapChart.zoomLevel - 1) / 2);
+	//imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
+	//	return -target.children.getIndex(0).radius;
 	//})
-	
+
 
 	imageTemplate.events.on("over", handleImageOver);
 	imageTemplate.events.on("out", handleImageOut);
@@ -229,6 +224,11 @@ am4core.ready(function() {
 	circle.defaultState.transitionEasing = am4core.ease.elasticOut;
 	// later we set fill color on template (when changing what type of data the map should show) and all the clones get the color because of this
 	circle.applyOnClones = true;
+	circle.nonScaling = false;
+
+	mapChart.events.on("zoomlevelchanged", function(){
+		circle.scale = 1 + mapChart.zoomLevel / 20;
+	})	
 
 	// heat rule makes the bubbles to be of a different width. Adjust min/max for smaller/bigger radius of a bubble
 	bubbleSeries.heatRules.push({
@@ -528,6 +528,15 @@ am4core.ready(function() {
 		return series;
 	}
 
+	// data warning label
+	var label = lineChart.plotContainer.createChild(am4core.Label);
+	label.text = "Current day stats may be incomplete until countries submit their data.";
+	label.fontSize = "0.7em";
+	label.opacity = 0.5;
+	label.align = "right";
+	label.horizontalCenter = "right";
+	label.verticalCenter = "bottom";
+
 	// BUTTONS
 	// create buttons
 	var activeButton = addButton("active", activeColor);
@@ -702,7 +711,12 @@ am4core.ready(function() {
 	}
 
 	function updateSeriesTooltip() {
-		lineChart.cursor.triggerMove(lineChart.cursor.point, "soft", true);
+
+		var position = dateAxis.dateToPosition(currentDate);
+		position = dateAxis.toGlobalPosition(position);
+		var x = dateAxis.positionToCoordinate(position);
+
+		lineChart.cursor.triggerMove({x:x, y:0}, "soft", true);
 		lineChart.series.each(function(series) {
 			if (!series.isHidden) {
 				series.tooltip.disabled = false;
