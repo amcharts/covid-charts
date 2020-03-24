@@ -199,7 +199,7 @@ am4core.ready(function() {
 	// if you want bubbles to become bigger when zoomed, set this to false
 	imageTemplate.nonScaling = true;
 	imageTemplate.strokeOpacity = 0;
-	imageTemplate.fillOpacity = 0.5;
+	imageTemplate.fillOpacity = 0.4;
 	imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
 	// this is needed for the tooltip to point to the top of the circle instead of the middle
 	//imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
@@ -398,7 +398,7 @@ am4core.ready(function() {
 	// bubble size slider
 	var sizeSlider = container.createChild(am4core.Slider);
 	sizeSlider.orientation = "vertical";
-	sizeSlider.height = am4core.percent(30);
+	sizeSlider.height = am4core.percent(15);
 	sizeSlider.marginLeft = 25;
 	sizeSlider.align = "left";
 	sizeSlider.valign = "top";
@@ -442,8 +442,68 @@ am4core.ready(function() {
   sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
 
 	sizeLabel.adapter.add("y", function(y, target){
-		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) / 2;
+		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.25;
 	})
+
+	// filter slider
+
+	// bubble size slider
+	var filterSlider = container.createChild(am4core.Slider);
+	filterSlider.orientation = "vertical";
+	filterSlider.height = am4core.percent(15);
+	filterSlider.marginLeft = 25;
+	filterSlider.align = "left";
+	filterSlider.valign = "top";
+	filterSlider.verticalCenter = "middle";
+	filterSlider.opacity = 0.7;
+	filterSlider.background.fill = am4core.color("#ffffff");	
+	filterSlider.adapter.add("y", function(y, target){
+		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.75;
+	})
+
+	filterSlider.startGrip.background.fill = activeColor;
+	filterSlider.startGrip.background.fillOpacity = 0.8;
+	filterSlider.startGrip.background.strokeOpacity = 0;
+	filterSlider.startGrip.icon.stroke = am4core.color("#ffffff");
+	filterSlider.startGrip.background.states.getKey("hover").properties.fill = activeColor;
+	filterSlider.startGrip.background.states.getKey("down").properties.fill = activeColor;
+	filterSlider.horizontalCenter = "middle";
+
+
+	filterSlider.events.on("rangechanged", function(){
+		filterSlider.startGrip.scale = 0.75 + filterSlider.start;
+		var maxValue = bubbleSeries.dataItem.values.value.high * filterSlider.start;
+		circle.clones.each(function(clone){
+			if(clone.dataItem.value > maxValue){
+				clone.dataItem.hide();
+			}
+			else{
+				clone.dataItem.show();
+			}
+			clone.radius = clone.radius;
+		})		
+	})
+
+
+  var sizeLabel = container.createChild(am4core.Label);
+  sizeLabel.text = "max bubble size *";
+  sizeLabel.rotation = 90;
+  sizeLabel.fontSize = "0.8em";
+  sizeLabel.fillOpacity = 0.5;
+  sizeLabel.horizontalCenter = "middle";
+  sizeLabel.align = "left"
+  sizeLabel.paddingBottom = 40;
+  sizeLabel.tooltip = new am4core.Tooltip();
+  sizeLabel.tooltip.setBounds({x:0,y:0, width:200000, height:200000})
+  sizeLabel.tooltip.label.wrap = true;
+  sizeLabel.tooltip.label.maxWidth = 300;
+  sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
+
+	sizeLabel.adapter.add("y", function(y, target){
+		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) / 2;
+	})	
+
+
 
 	// play behavior
 	function play() {
