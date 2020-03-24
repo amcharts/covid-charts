@@ -224,12 +224,7 @@ am4core.ready(function() {
 	circle.defaultState.transitionEasing = am4core.ease.elasticOut;
 	// later we set fill color on template (when changing what type of data the map should show) and all the clones get the color because of this
 	circle.applyOnClones = true;
-	circle.nonScaling = false;
-
-	mapChart.events.on("zoomlevelchanged", function(){
-		circle.scale = 1 + mapChart.zoomLevel / 20;
-	})	
-
+	
 	// heat rule makes the bubbles to be of a different width. Adjust min/max for smaller/bigger radius of a bubble
 	bubbleSeries.heatRules.push({
 		"target": circle,
@@ -317,7 +312,7 @@ am4core.ready(function() {
 	// buttons & chart container
 	var buttonsAndChartContainer = container.createChild(am4core.Container);
 	buttonsAndChartContainer.layout = "vertical";
-	buttonsAndChartContainer.height = am4core.percent(38); // make this bigger if you want more space for the chart
+	buttonsAndChartContainer.height = am4core.percent(40); // make this bigger if you want more space for the chart
 	buttonsAndChartContainer.width = am4core.percent(100);
 	buttonsAndChartContainer.valign = "bottom";
 
@@ -399,6 +394,56 @@ am4core.ready(function() {
 	slider.startGrip.background.strokeOpacity = 0;
 	slider.startGrip.icon.stroke = am4core.color("#ffffff");
 	slider.startGrip.background.states.copyFrom(playButton.background.states)
+
+	// bubble size slider
+	var sizeSlider = container.createChild(am4core.Slider);
+	sizeSlider.orientation = "vertical";
+	sizeSlider.height = am4core.percent(30);
+	sizeSlider.marginLeft = 25;
+	sizeSlider.align = "left";
+	sizeSlider.valign = "top";
+	sizeSlider.verticalCenter = "middle";
+	sizeSlider.opacity = 0.7;
+	sizeSlider.background.fill = am4core.color("#ffffff");	
+	sizeSlider.adapter.add("y", function(y, target){
+		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) / 2;
+	})
+
+	sizeSlider.startGrip.background.fill = activeColor;
+	sizeSlider.startGrip.background.fillOpacity = 0.8;
+	sizeSlider.startGrip.background.strokeOpacity = 0;
+	sizeSlider.startGrip.icon.stroke = am4core.color("#ffffff");
+	sizeSlider.startGrip.background.states.getKey("hover").properties.fill = activeColor;
+	sizeSlider.startGrip.background.states.getKey("down").properties.fill = activeColor;
+	sizeSlider.horizontalCenter = "middle";
+
+
+	sizeSlider.events.on("rangechanged", function(){
+		sizeSlider.startGrip.scale = 0.75 + sizeSlider.start;
+		bubbleSeries.heatRules.getIndex(0).max = 30 + sizeSlider.start * 500;
+		circle.clones.each(function(clone){
+			clone.radius = clone.radius;
+		})
+	})
+
+
+  var sizeLabel = container.createChild(am4core.Label);
+  sizeLabel.text = "max bubble size *";
+  sizeLabel.rotation = 90;
+  sizeLabel.fontSize = "0.8em";
+  sizeLabel.fillOpacity = 0.5;
+  sizeLabel.horizontalCenter = "middle";
+  sizeLabel.align = "left"
+  sizeLabel.paddingBottom = 40;
+  sizeLabel.tooltip = new am4core.Tooltip();
+  sizeLabel.tooltip.setBounds({x:0,y:0, width:200000, height:200000})
+  sizeLabel.tooltip.label.wrap = true;
+  sizeLabel.tooltip.label.maxWidth = 300;
+  sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
+
+	sizeLabel.adapter.add("y", function(y, target){
+		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) / 2;
+	})
 
 	// play behavior
 	function play() {
