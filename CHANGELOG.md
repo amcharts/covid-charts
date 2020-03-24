@@ -4,6 +4,9 @@ This is a changelog of amCharts COVID-19 coverage templates/data project.
 
 Updates are not versioned. This log includes only noteworthy updates.
 
+## 2020-03-24
+- No longer generating individual country data files.
+
 ## 2020-03-23
 - No longer generating individual daily files.
 
