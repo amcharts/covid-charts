@@ -568,7 +568,7 @@ am4core.ready(function() {
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
-	//valueAxis.extraMax = 0.05;
+	valueAxis.extraMax = 0.05;
 	valueAxis.maxPrecision = 0;
 	valueAxis.renderer.inside = true;
 	valueAxis.renderer.labels.template.verticalCenter = "bottom";
@@ -840,7 +840,7 @@ am4core.ready(function() {
 
 		lineChart.invalidateRawData();
 		updateTotals(currentIndex);
-		setTimeout(updateSeriesTooltip, 2000);
+		setTimeout(updateSeriesTooltip, 1000);
 	}
 
 	function updateSeriesTooltip() {
