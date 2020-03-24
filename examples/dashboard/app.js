@@ -52,7 +52,7 @@ am4core.ready(function() {
 
 	// make a map of country indexes for later use
 	var countryIndexMap = {};
-	var list = covid_world_timeline[0].list;
+	var list = covid_world_timeline[covid_world_timeline.length - 1].list;
 	for (var i = 0; i < list.length; i++) {
 		var country = list[i]
 		countryIndexMap[country.id] = i;
@@ -654,6 +654,11 @@ am4core.ready(function() {
 
 		return series;
 	}
+
+	lineChart.plotContainer.events.on("up", function(){
+		slider.start = lineChart.cursor.xPosition *  ((dateAxis.max - dateAxis.min) / (lastDate.getTime() - dateAxis.min));
+	})
+
 
 	// data warning label
 	var label = lineChart.plotContainer.createChild(am4core.Label);
