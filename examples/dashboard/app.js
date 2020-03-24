@@ -476,9 +476,9 @@ am4core.ready(function() {
 
 
 	filterSlider.events.on("rangechanged", function(){
-		var maxValue = max[currentType] * filterSlider.start + 1;
-		bubbleSeries.heatRules.getIndex(0).maxValue = maxValue;
-		if(!isNaN(maxValue)){
+		var maxValue = max[currentType] * filterSlider.start + 1;		
+		if(!isNaN(maxValue) && bubbleSeries.inited){
+			bubbleSeries.heatRules.getIndex(0).maxValue = maxValue;
 			circle.clones.each(function(clone){
 				if(clone.dataItem.value > maxValue){
 					clone.dataItem.hide();
