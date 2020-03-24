@@ -226,7 +226,7 @@ am4core.ready(function() {
 	circle.defaultState.transitionEasing = am4core.ease.elasticOut;
 	// later we set fill color on template (when changing what type of data the map should show) and all the clones get the color because of this
 	circle.applyOnClones = true;
-	
+
 	// heat rule makes the bubbles to be of a different width. Adjust min/max for smaller/bigger radius of a bubble
 	bubbleSeries.heatRules.push({
 		"target": circle,
@@ -407,8 +407,8 @@ am4core.ready(function() {
 	sizeSlider.valign = "top";
 	sizeSlider.verticalCenter = "middle";
 	sizeSlider.opacity = 0.7;
-	sizeSlider.background.fill = am4core.color("#ffffff");	
-	sizeSlider.adapter.add("y", function(y, target){
+	sizeSlider.background.fill = am4core.color("#ffffff");
+	sizeSlider.adapter.add("y", function(y, target) {
 		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.25;
 	})
 
@@ -421,31 +421,31 @@ am4core.ready(function() {
 	sizeSlider.horizontalCenter = "middle";
 
 
-	sizeSlider.events.on("rangechanged", function(){
+	sizeSlider.events.on("rangechanged", function() {
 		sizeSlider.startGrip.scale = 0.75 + sizeSlider.start;
 		bubbleSeries.heatRules.getIndex(0).max = 30 + sizeSlider.start * 100;
-		circle.clones.each(function(clone){
+		circle.clones.each(function(clone) {
 			clone.radius = clone.radius;
 		})
 	})
 
 
-  var sizeLabel = container.createChild(am4core.Label);
-  sizeLabel.text = "max bubble size *";
-  sizeLabel.rotation = 90;
-  sizeLabel.fontSize = "0.8em";
-  sizeLabel.fillOpacity = 0.5;
-  sizeLabel.horizontalCenter = "middle";
-  sizeLabel.align = "left"
-  sizeLabel.paddingBottom = 40;
-  sizeLabel.tooltip = new am4core.Tooltip();
-  sizeLabel.tooltip.setBounds({x:0,y:0, width:200000, height:200000})
-  sizeLabel.tooltip.label.wrap = true;
-  sizeLabel.tooltip.label.maxWidth = 300;
-  sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
-  sizeLabel.fill = am4core.color("#ffffff");
+	var sizeLabel = container.createChild(am4core.Label);
+	sizeLabel.text = "max bubble size *";
+	sizeLabel.rotation = 90;
+	sizeLabel.fontSize = "0.8em";
+	sizeLabel.fillOpacity = 0.5;
+	sizeLabel.horizontalCenter = "middle";
+	sizeLabel.align = "left"
+	sizeLabel.paddingBottom = 40;
+	sizeLabel.tooltip = new am4core.Tooltip();
+	sizeLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
+	sizeLabel.tooltip.label.wrap = true;
+	sizeLabel.tooltip.label.maxWidth = 300;
+	sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
+	sizeLabel.fill = am4core.color("#ffffff");
 
-	sizeLabel.adapter.add("y", function(y, target){
+	sizeLabel.adapter.add("y", function(y, target) {
 		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.25;
 	})
 
@@ -460,8 +460,8 @@ am4core.ready(function() {
 	filterSlider.valign = "top";
 	filterSlider.verticalCenter = "middle";
 	filterSlider.opacity = 0.7;
-	filterSlider.background.fill = am4core.color("#ffffff");	
-	filterSlider.adapter.add("y", function(y, target){
+	filterSlider.background.fill = am4core.color("#ffffff");
+	filterSlider.adapter.add("y", function(y, target) {
 		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.7;
 	})
 
@@ -475,41 +475,41 @@ am4core.ready(function() {
 	filterSlider.start = 1;
 
 
-	filterSlider.events.on("rangechanged", function(){
-		var maxValue = max[currentType] * filterSlider.start + 1;		
-		if(!isNaN(maxValue) && bubbleSeries.inited){
+	filterSlider.events.on("rangechanged", function() {
+		var maxValue = max[currentType] * filterSlider.start + 1;
+		if (!isNaN(maxValue) && bubbleSeries.inited) {
 			bubbleSeries.heatRules.getIndex(0).maxValue = maxValue;
-			circle.clones.each(function(clone){
-				if(clone.dataItem.value > maxValue){
+			circle.clones.each(function(clone) {
+				if (clone.dataItem.value > maxValue) {
 					clone.dataItem.hide();
 				}
-				else{
+				else {
 					clone.dataItem.show();
 				}
 				clone.radius = clone.radius;
-			})		
+			})
 		}
 	})
 
 
-  var filterLabel = container.createChild(am4core.Label);
-  filterLabel.text = "filter max values *";
-  filterLabel.rotation = 90;
-  filterLabel.fontSize = "0.8em";
-  filterLabel.fillOpacity = 0.5;
-  filterLabel.horizontalCenter = "middle";
-  filterLabel.align = "left"
-  filterLabel.paddingBottom = 40;
-  filterLabel.tooltip = new am4core.Tooltip();
-  filterLabel.tooltip.setBounds({x:0,y:0, width:200000, height:200000})
-  filterLabel.tooltip.label.wrap = true;
-  filterLabel.tooltip.label.maxWidth = 300;
-  filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with less values"
-  filterLabel.fill = am4core.color("#ffffff");
+	var filterLabel = container.createChild(am4core.Label);
+	filterLabel.text = "filter max values *";
+	filterLabel.rotation = 90;
+	filterLabel.fontSize = "0.8em";
+	filterLabel.fillOpacity = 0.5;
+	filterLabel.horizontalCenter = "middle";
+	filterLabel.align = "left"
+	filterLabel.paddingBottom = 40;
+	filterLabel.tooltip = new am4core.Tooltip();
+	filterLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
+	filterLabel.tooltip.label.wrap = true;
+	filterLabel.tooltip.label.maxWidth = 300;
+	filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with less values"
+	filterLabel.fill = am4core.color("#ffffff");
 
-	filterLabel.adapter.add("y", function(y, target){
+	filterLabel.adapter.add("y", function(y, target) {
 		return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.7;
-	})	
+	})
 
 
 
@@ -559,7 +559,7 @@ am4core.ready(function() {
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
 	dateAxis.tooltip.background.fill = activeColor;
-	dateAxis.tooltip.background.stroke = activeColor;	
+	dateAxis.tooltip.background.stroke = activeColor;
 
 	// value axis
 	// https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
@@ -568,10 +568,24 @@ am4core.ready(function() {
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
 	valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
-	valueAxis.extraMax = 0.05;
+	//valueAxis.extraMax = 0.05;
+	valueAxis.maxPrecision = 0;
 	valueAxis.renderer.inside = true;
 	valueAxis.renderer.labels.template.verticalCenter = "bottom";
 	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
+	valueAxis.adapter.add("max", function(max, target) {
+		if (max < 5) {
+			max = 5
+		}
+		return max;
+	})
+
+	valueAxis.adapter.add("min", function(min, target) {
+		if (min < 0) {
+			min = 0;
+		}
+		return min;
+	})
 
 	// cursor
 	// https://www.amcharts.com/docs/v4/concepts/chart-cursor/
@@ -725,7 +739,7 @@ am4core.ready(function() {
 		bubbleSeries.mapImages.template.children.getIndex(0).fill = colors[name];
 
 		dateAxis.tooltip.background.fill = colors[name];
-		dateAxis.tooltip.background.stroke = colors[name];			
+		dateAxis.tooltip.background.stroke = colors[name];
 		lineChart.cursor.lineX.stroke = colors[name];
 
 		// show series
@@ -830,7 +844,7 @@ am4core.ready(function() {
 		position = dateAxis.toGlobalPosition(position);
 		var x = dateAxis.positionToCoordinate(position);
 
-		lineChart.cursor.triggerMove({x:x, y:0}, "soft", true);
+		lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
 		lineChart.series.each(function(series) {
 			if (!series.isHidden) {
 				series.tooltip.disabled = false;
