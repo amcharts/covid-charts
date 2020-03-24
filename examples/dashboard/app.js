@@ -478,15 +478,17 @@ am4core.ready(function() {
 	filterSlider.events.on("rangechanged", function(){
 		var maxValue = max[currentType] * filterSlider.start + 1;
 		bubbleSeries.heatRules.getIndex(0).maxValue = maxValue;
-		circle.clones.each(function(clone){
-			if(clone.dataItem.value > maxValue){
-				clone.dataItem.hide();
-			}
-			else{
-				clone.dataItem.show();
-			}
-			clone.radius = clone.radius;
-		})		
+		if(!isNaN(maxValue)){
+			circle.clones.each(function(clone){
+				if(clone.dataItem.value > maxValue){
+					clone.dataItem.hide();
+				}
+				else{
+					clone.dataItem.show();
+				}
+				clone.radius = clone.radius;
+			})		
+		}
 	})
 
 
