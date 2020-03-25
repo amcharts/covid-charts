@@ -285,6 +285,7 @@ am4core.ready(function() {
 	title.horizontalCenter = "left";
 	title.marginLeft = 20;
 	title.paddingBottom = 10;
+	title.fill = am4core.color("#ffffff");
 	title.y = 20;
 
 	// switch between map and globe
@@ -292,6 +293,8 @@ am4core.ready(function() {
 	mapGlobeSwitch.align = "right"
 	mapGlobeSwitch.y = 15;
 	mapGlobeSwitch.leftLabel.text = "Map";
+	mapGlobeSwitch.leftLabel.fill = am4core.color("#ffffff");
+	mapGlobeSwitch.rightLabel.fill = am4core.color("#ffffff");
 	mapGlobeSwitch.rightLabel.text = "Globe";
 	mapGlobeSwitch.verticalCenter = "top";
 
@@ -327,6 +330,7 @@ am4core.ready(function() {
 	// name of a country and date label
 	var countryName = nameAndButtonsContainer.createChild(am4core.Label);
 	countryName.fontSize = "1.1em";
+	countryName.fill = am4core.color("#ffffff");
 	countryName.valign = "middle";
 
 	// buttons container (active/confirmed/recovered/deaths)
@@ -340,12 +344,12 @@ am4core.ready(function() {
 	var chartAndSliderContainer = buttonsAndChartContainer.createChild(am4core.Container);
 	chartAndSliderContainer.layout = "vertical";
 	chartAndSliderContainer.height = am4core.percent(100);
-	chartAndSliderContainer.width = am4core.percent(100);
-	chartAndSliderContainer.background.fill = am4core.color("#000000");
+	chartAndSliderContainer.width = am4core.percent(100);	
 	chartAndSliderContainer.background = new am4core.RoundedRectangle();
+	chartAndSliderContainer.background.fill = am4core.color("#000000");
 	chartAndSliderContainer.background.cornerRadius(30, 30, 0, 0)
-	chartAndSliderContainer.background.fillOpacity = 0.15;
-	chartAndSliderContainer.paddingTop = 15;
+	chartAndSliderContainer.background.fillOpacity = 0.25;
+	chartAndSliderContainer.paddingTop = 12;
 	chartAndSliderContainer.paddingBottom = 0;
 
 	// Slider container
@@ -432,6 +436,7 @@ am4core.ready(function() {
 
 	var sizeLabel = container.createChild(am4core.Label);
 	sizeLabel.text = "max bubble size *";
+	sizeLabel.fill = am4core.color("#ffffff");
 	sizeLabel.rotation = 90;
 	sizeLabel.fontSize = "0.8em";
 	sizeLabel.fillOpacity = 0.5;
@@ -442,7 +447,7 @@ am4core.ready(function() {
 	sizeLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
 	sizeLabel.tooltip.label.wrap = true;
 	sizeLabel.tooltip.label.maxWidth = 300;
-	sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
+	sizeLabel.tooltipText = "Some countries have so many cases that bubbles for countries with smaller values often look the same even if there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relatively small values you could compare them anyway."
 	sizeLabel.fill = am4core.color("#ffffff");
 
 	sizeLabel.adapter.add("y", function(y, target) {
@@ -495,6 +500,7 @@ am4core.ready(function() {
 	var filterLabel = container.createChild(am4core.Label);
 	filterLabel.text = "filter max values *";
 	filterLabel.rotation = 90;
+	filterLabel.fill = am4core.color("#ffffff");
 	filterLabel.fontSize = "0.8em";
 	filterLabel.fillOpacity = 0.5;
 	filterLabel.horizontalCenter = "middle";
@@ -504,7 +510,7 @@ am4core.ready(function() {
 	filterLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
 	filterLabel.tooltip.label.wrap = true;
 	filterLabel.tooltip.label.maxWidth = 300;
-	filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with less values"
+	filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with smaller number of cases."
 	filterLabel.fill = am4core.color("#ffffff");
 
 	filterLabel.adapter.add("y", function(y, target) {
@@ -546,7 +552,8 @@ am4core.ready(function() {
 	lineChart.paddingLeft = 30;
 	lineChart.maskBullets = false;
 	lineChart.zoomOutButton.disabled = true;
-	lineChart.paddingBottom = 7;
+	lineChart.paddingBottom = 5;
+	lineChart.paddingTop = 3;
 
 	// make a copy of data as we will be modifying it
 	lineChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
@@ -556,23 +563,31 @@ am4core.ready(function() {
 	var dateAxis = lineChart.xAxes.push(new am4charts.DateAxis());
 	dateAxis.renderer.minGridDistance = 50;
 	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	dateAxis.renderer.grid.template.strokeOpacity = 0.25;
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
 	dateAxis.tooltip.background.fill = activeColor;
 	dateAxis.tooltip.background.stroke = activeColor;
+	dateAxis.renderer.labels.template.fill = am4core.color("#ffffff");
+	/*
+	dateAxis.renderer.labels.template.adapter.add("fillOpacity", function(fillOpacity, target){
+			return dateAxis.valueToPosition(target.dataItem.value) + 0.1;
+	})*/
 
 	// value axis
 	// https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
 	var valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
 	valueAxis.interpolationDuration = 3000;
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	valueAxis.renderer.grid.template.strokeOpacity = 0.25;
 	valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
 	valueAxis.extraMax = 0.05;
 	valueAxis.maxPrecision = 0;
 	valueAxis.renderer.inside = true;
 	valueAxis.renderer.labels.template.verticalCenter = "bottom";
-	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
+	valueAxis.renderer.labels.template.fill = am4core.color("#ffffff");
+	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);	
 	valueAxis.adapter.add("max", function(max, target) {
 		if (max < 5) {
 			max = 5
@@ -602,6 +617,7 @@ am4core.ready(function() {
 	// https://www.amcharts.com/docs/v4/concepts/legend/	
 	lineChart.legend = new am4charts.Legend();
 	lineChart.legend.parent = lineChart.plotContainer;
+	lineChart.legend.labels.template.fill = am4core.color("#ffffff");
 
 	// create series
 	var activeSeries = addSeries("active", activeColor);
@@ -663,6 +679,7 @@ am4core.ready(function() {
 	// data warning label
 	var label = lineChart.plotContainer.createChild(am4core.Label);
 	label.text = "Current day stats may be incomplete until countries submit their data.";
+	label.fill = am4core.color("#ffffff");
 	label.fontSize = "0.7em";
 	label.opacity = 0.5;
 	label.align = "right";
@@ -682,6 +699,7 @@ am4core.ready(function() {
 	function addButton(name, color) {
 		var button = buttonsContainer.createChild(am4core.Button)
 		button.label.valign = "middle"
+		button.label.fill = am4core.color("#ffffff");
 		button.fontSize = "1em";
 		button.background.cornerRadius(30, 30, 30, 30);
 		button.background.strokeOpacity = 0.3
