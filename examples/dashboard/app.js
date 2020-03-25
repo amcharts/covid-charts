@@ -344,8 +344,8 @@ am4core.ready(function() {
 	chartAndSliderContainer.background.fill = am4core.color("#000000");
 	chartAndSliderContainer.background = new am4core.RoundedRectangle();
 	chartAndSliderContainer.background.cornerRadius(30, 30, 0, 0)
-	chartAndSliderContainer.background.fillOpacity = 0.15;
-	chartAndSliderContainer.paddingTop = 15;
+	chartAndSliderContainer.background.fillOpacity = 0.25;
+	chartAndSliderContainer.paddingTop = 12;
 	chartAndSliderContainer.paddingBottom = 0;
 
 	// Slider container
@@ -442,7 +442,7 @@ am4core.ready(function() {
 	sizeLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
 	sizeLabel.tooltip.label.wrap = true;
 	sizeLabel.tooltip.label.maxWidth = 300;
-	sizeLabel.tooltipText = "Some countries has so many cases that bubbles of countries with smaller values often look the same even there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relative small values you could compare them anyway."
+	sizeLabel.tooltipText = "Some countries have so many cases that bubbles for countries with smaller values often look the same even if there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relatively small values you could compare them anyway."
 	sizeLabel.fill = am4core.color("#ffffff");
 
 	sizeLabel.adapter.add("y", function(y, target) {
@@ -504,7 +504,7 @@ am4core.ready(function() {
 	filterLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
 	filterLabel.tooltip.label.wrap = true;
 	filterLabel.tooltip.label.maxWidth = 300;
-	filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with less values"
+	filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with smaller number of cases."
 	filterLabel.fill = am4core.color("#ffffff");
 
 	filterLabel.adapter.add("y", function(y, target) {
@@ -546,7 +546,8 @@ am4core.ready(function() {
 	lineChart.paddingLeft = 30;
 	lineChart.maskBullets = false;
 	lineChart.zoomOutButton.disabled = true;
-	lineChart.paddingBottom = 7;
+	lineChart.paddingBottom = 5;
+	lineChart.paddingTop = 3;
 
 	// make a copy of data as we will be modifying it
 	lineChart.data = JSON.parse(JSON.stringify(covid_total_timeline));
@@ -556,16 +557,21 @@ am4core.ready(function() {
 	var dateAxis = lineChart.xAxes.push(new am4charts.DateAxis());
 	dateAxis.renderer.minGridDistance = 50;
 	dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	dateAxis.renderer.grid.template.strokeOpacity = 0.25;
 	dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
 	dateAxis.tooltip.label.fontSize = "0.8em";
 	dateAxis.tooltip.background.fill = activeColor;
 	dateAxis.tooltip.background.stroke = activeColor;
+	dateAxis.renderer.labels.template.adapter.add("fillOpacity", function(fillOpacity, target){
+			return dateAxis.valueToPosition(target.dataItem.value) + 0.1;
+	})
 
 	// value axis
 	// https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
 	var valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
 	valueAxis.interpolationDuration = 3000;
 	valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
+	valueAxis.renderer.grid.template.strokeOpacity = 0.25;
 	valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
 	valueAxis.extraMax = 0.05;
