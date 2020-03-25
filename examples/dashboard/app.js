@@ -285,6 +285,7 @@ am4core.ready(function() {
 	title.horizontalCenter = "left";
 	title.marginLeft = 20;
 	title.paddingBottom = 10;
+	title.fill = am4core.color("#ffffff");
 	title.y = 20;
 
 	// switch between map and globe
@@ -292,6 +293,8 @@ am4core.ready(function() {
 	mapGlobeSwitch.align = "right"
 	mapGlobeSwitch.y = 15;
 	mapGlobeSwitch.leftLabel.text = "Map";
+	mapGlobeSwitch.leftLabel.fill = am4core.color("#ffffff");
+	mapGlobeSwitch.rightLabel.fill = am4core.color("#ffffff");
 	mapGlobeSwitch.rightLabel.text = "Globe";
 	mapGlobeSwitch.verticalCenter = "top";
 
@@ -327,6 +330,7 @@ am4core.ready(function() {
 	// name of a country and date label
 	var countryName = nameAndButtonsContainer.createChild(am4core.Label);
 	countryName.fontSize = "1.1em";
+	countryName.fill = am4core.color("#ffffff");
 	countryName.valign = "middle";
 
 	// buttons container (active/confirmed/recovered/deaths)
@@ -340,9 +344,9 @@ am4core.ready(function() {
 	var chartAndSliderContainer = buttonsAndChartContainer.createChild(am4core.Container);
 	chartAndSliderContainer.layout = "vertical";
 	chartAndSliderContainer.height = am4core.percent(100);
-	chartAndSliderContainer.width = am4core.percent(100);
-	chartAndSliderContainer.background.fill = am4core.color("#000000");
+	chartAndSliderContainer.width = am4core.percent(100);	
 	chartAndSliderContainer.background = new am4core.RoundedRectangle();
+	chartAndSliderContainer.background.fill = am4core.color("#000000");
 	chartAndSliderContainer.background.cornerRadius(30, 30, 0, 0)
 	chartAndSliderContainer.background.fillOpacity = 0.25;
 	chartAndSliderContainer.paddingTop = 12;
@@ -432,6 +436,7 @@ am4core.ready(function() {
 
 	var sizeLabel = container.createChild(am4core.Label);
 	sizeLabel.text = "max bubble size *";
+	sizeLabel.fill = am4core.color("#ffffff");
 	sizeLabel.rotation = 90;
 	sizeLabel.fontSize = "0.8em";
 	sizeLabel.fillOpacity = 0.5;
@@ -495,6 +500,7 @@ am4core.ready(function() {
 	var filterLabel = container.createChild(am4core.Label);
 	filterLabel.text = "filter max values *";
 	filterLabel.rotation = 90;
+	filterLabel.fill = am4core.color("#ffffff");
 	filterLabel.fontSize = "0.8em";
 	filterLabel.fillOpacity = 0.5;
 	filterLabel.horizontalCenter = "middle";
@@ -562,6 +568,7 @@ am4core.ready(function() {
 	dateAxis.tooltip.label.fontSize = "0.8em";
 	dateAxis.tooltip.background.fill = activeColor;
 	dateAxis.tooltip.background.stroke = activeColor;
+	dateAxis.renderer.labels.template.fill = am4core.color("#ffffff");
 	dateAxis.renderer.labels.template.adapter.add("fillOpacity", function(fillOpacity, target){
 			return dateAxis.valueToPosition(target.dataItem.value) + 0.1;
 	})
@@ -578,7 +585,8 @@ am4core.ready(function() {
 	valueAxis.maxPrecision = 0;
 	valueAxis.renderer.inside = true;
 	valueAxis.renderer.labels.template.verticalCenter = "bottom";
-	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
+	valueAxis.renderer.labels.template.fill = am4core.color("#ffffff");
+	valueAxis.renderer.labels.template.padding(2, 2, 2, 2);	
 	valueAxis.adapter.add("max", function(max, target) {
 		if (max < 5) {
 			max = 5
@@ -608,6 +616,7 @@ am4core.ready(function() {
 	// https://www.amcharts.com/docs/v4/concepts/legend/	
 	lineChart.legend = new am4charts.Legend();
 	lineChart.legend.parent = lineChart.plotContainer;
+	lineChart.legend.labels.template.fill = am4core.color("#ffffff");
 
 	// create series
 	var activeSeries = addSeries("active", activeColor);
@@ -669,6 +678,7 @@ am4core.ready(function() {
 	// data warning label
 	var label = lineChart.plotContainer.createChild(am4core.Label);
 	label.text = "Current day stats may be incomplete until countries submit their data.";
+	label.fill = am4core.color("#ffffff");
 	label.fontSize = "0.7em";
 	label.opacity = 0.5;
 	label.align = "right";
@@ -688,6 +698,7 @@ am4core.ready(function() {
 	function addButton(name, color) {
 		var button = buttonsContainer.createChild(am4core.Button)
 		button.label.valign = "middle"
+		button.label.fill = am4core.color("#ffffff");
 		button.fontSize = "1em";
 		button.background.cornerRadius(30, 30, 30, 30);
 		button.background.strokeOpacity = 0.3
