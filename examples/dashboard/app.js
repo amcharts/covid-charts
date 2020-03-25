@@ -569,9 +569,10 @@ am4core.ready(function() {
 	dateAxis.tooltip.background.fill = activeColor;
 	dateAxis.tooltip.background.stroke = activeColor;
 	dateAxis.renderer.labels.template.fill = am4core.color("#ffffff");
+	/*
 	dateAxis.renderer.labels.template.adapter.add("fillOpacity", function(fillOpacity, target){
 			return dateAxis.valueToPosition(target.dataItem.value) + 0.1;
-	})
+	})*/
 
 	// value axis
 	// https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
