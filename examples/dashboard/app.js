@@ -81,7 +81,7 @@ am4core.ready(function() {
 	}
 
 	function idToName(id) {
-		return am4geodata_data_countries2[id] ? am4geodata_data_countries2[id].country : id;
+		return am4geodata_data_countries2[id] ? am4geodata_data_countries2[id].country : id == "XX" ? "Others" : id;
 	}
 
 	// get slide data
