@@ -80,6 +80,11 @@ am4core.ready(function() {
 
     var data = covid_world_timeline[index];
 
+    // augment with names
+    for (var i = 0; i < data.list.length; i++) {
+      data.list[i].name = idToName(data.list[i].id);
+    }    
+
     return data;
   }
 
@@ -230,6 +235,7 @@ am4core.ready(function() {
   imageTemplate.strokeOpacity = 0;
   imageTemplate.fillOpacity = 0.4;
   imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
+  imageTemplate.applyOnClones = true;
 
   imageTemplate.events.on("over", handleImageOver);
   imageTemplate.events.on("out", handleImageOut);
@@ -834,7 +840,7 @@ am4core.ready(function() {
       currentTypeName += " cases";
     }
 
-    imageTemplate.tooltipText = "[bold]{name}: {value}[/] [font-size:10px]" + currentTypeName;
+    bubbleSeries.mapImages.template.tooltipText = "[bold]{name}: {value}[/] [font-size:10px]\n" + currentTypeName;
 
     // make button active
     var activeButton = buttons[name];
@@ -1197,16 +1203,13 @@ am4core.ready(function() {
   // set initial data and names
   updateCountryName();
   changeDataType("active");
+  populateCountries(slideData.list);
 
   setTimeout(updateSeriesTooltip, 3000);
 
   function updateCountryTooltip() {
-    polygonSeries.mapPolygons.template.tooltipText = "[bold]{name}: {value.formatNumber('#.')}[/]\n[font-size:10px]" + currentTypeName + " per million"
+    polygonSeries.mapPolygons.template.tooltipText = "[bold]{name}: {value.formatNumber('#.')}[/]\n[font-size:10px]" + currentTypeName + " per million"    
   }
-
-  polygonSeries.events.once("datavalidated", function() {
-    populateCountries(slideData.list);
-  });
 
   /**
    * Country/state list on the right
@@ -1216,21 +1219,15 @@ am4core.ready(function() {
     table.find(".area").remove();
     for (var i = 0; i < list.length; i++) {
       var area = list[i];
-      var polygon = polygonSeries.getPolygonById(area.id);
-      if (polygon) {
-        var name = polygon.dataItem.dataContext.name;
-        if (name) {
-          var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
-            selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-          }).hover(function() {
-            rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-          });
-          $("<td>").appendTo(tr).data("areaid", area.id).html(name);
-          $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
-          $("<td>").addClass("value").appendTo(tr).html(area.deaths);
-          $("<td>").addClass("value").appendTo(tr).html(area.recovered);
-        }
-      }
+      var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
+        selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+      }).hover(function() {
+        rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+      });
+      $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
+      $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
+      $("<td>").addClass("value").appendTo(tr).html(area.deaths);
+      $("<td>").addClass("value").appendTo(tr).html(area.recovered);
 
     }
     $("#areas").DataTable({
@@ -1239,6 +1236,11 @@ am4core.ready(function() {
     }).column("1")
       .order("desc")
       .draw();;
+  }
+
+
+  function idToName(id) {
+    return am4geodata_data_countries2[id] ? am4geodata_data_countries2[id].country : id == "XX" ? "Others" : id;
   }
 
 
