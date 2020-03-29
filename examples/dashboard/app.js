@@ -78,11 +78,6 @@ am4core.ready(function() {
 
     var data = covid_world_timeline[index];
 
-    // augment with names
-    for (var i = 0; i < data.list.length; i++) {
-      data.list[i].name = idToName(data.list[i].id);
-    }    
-
     return data;
   }
 
@@ -120,6 +115,13 @@ am4core.ready(function() {
   var container = am4core.create("chartdiv", am4core.Container);
   container.width = am4core.percent(100);
   container.height = am4core.percent(100);
+
+  container.tooltip = new am4core.Tooltip();
+  container.tooltip.background.fill = am4core.color("#000000");
+  container.tooltip.background.stroke = activeColor;
+  container.tooltip.fontSize = "0.9em";
+  container.tooltip.getFillFromObject = false;
+  container.tooltip.getStrokeFromObject = false;
 
   // MAP CHART 
   // https://www.amcharts.com/docs/v4/chart-types/map/
@@ -223,16 +225,12 @@ am4core.ready(function() {
   imageTemplate.strokeOpacity = 0;
   imageTemplate.fillOpacity = 0.4;
   imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
-  // this is needed for the tooltip to point to the top of the circle instead of the middle
-  //imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
-  //  return -target.children.getIndex(0).radius;
-  //})
-
 
   imageTemplate.events.on("over", handleImageOver);
   imageTemplate.events.on("out", handleImageOut);
   imageTemplate.events.on("hit", handleImageHit);
 
+  // this is needed for the tooltip to point to the top of the circle instead of the middle
   imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
     return -target.children.getIndex(0).radius;
   })
@@ -516,7 +514,6 @@ am4core.ready(function() {
   sizeLabel.horizontalCenter = "middle";
   sizeLabel.align = "left"
   sizeLabel.paddingBottom = 40;
-  sizeLabel.tooltip = new am4core.Tooltip();
   sizeLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
   sizeLabel.tooltip.label.wrap = true;
   sizeLabel.tooltip.label.maxWidth = 300;
@@ -579,8 +576,6 @@ am4core.ready(function() {
   filterLabel.horizontalCenter = "middle";
   filterLabel.align = "left"
   filterLabel.paddingBottom = 40;
-  filterLabel.tooltip = new am4core.Tooltip();
-  filterLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
   filterLabel.tooltip.label.wrap = true;
   filterLabel.tooltip.label.maxWidth = 300;
   filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with smaller number of cases."
@@ -1195,7 +1190,10 @@ am4core.ready(function() {
   // set initial data and names
   updateCountryName();
   changeDataType("active");
-  populateCountries(slideData.list);
+
+  polygonSeries.events.on("datavalidated", function() {
+    populateCountries(slideData.list);
+  });
 
   setTimeout(updateSeriesTooltip, 3000);
 
@@ -1211,15 +1209,21 @@ am4core.ready(function() {
     table.find(".area").remove();
     for (var i = 0; i < list.length; i++) {
       var area = list[i];
-      var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
-        selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-      }).hover(function() {
-        rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-      });
-      $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
-      $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
-      $("<td>").addClass("value").appendTo(tr).html(area.deaths);
-      $("<td>").addClass("value").appendTo(tr).html(area.recovered);
+      var polygon = polygonSeries.getPolygonById(area.id);
+      if (polygon) {
+        var name = polygon.dataItem.dataContext.name;
+        if (name) {
+          var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
+            selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+          }).hover(function() {
+            rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+          });
+          $("<td>").appendTo(tr).data("areaid", area.id).html(name);
+          $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
+          $("<td>").addClass("value").appendTo(tr).html(area.deaths);
+          $("<td>").addClass("value").appendTo(tr).html(area.recovered);
+        }
+      }
 
     }
     $("#areas").DataTable({
@@ -1228,11 +1232,6 @@ am4core.ready(function() {
     }).column("1")
       .order("desc")
       .draw();;
-  }
-
-
-  function idToName(id) {
-    return am4geodata_data_countries2[id] ? am4geodata_data_countries2[id].country : id == "XX" ? "Others" : id;
   }
 
 
@@ -1490,6 +1489,6 @@ am4core.ready(function() {
     "ZM": "13460305",
     "ZW": "13061000"
   }
-
-
 });
+
+
