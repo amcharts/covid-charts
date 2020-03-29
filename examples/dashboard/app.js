@@ -12,6 +12,7 @@
 
 
 
+
 // Themes begin
 am4core.useTheme(am4themes_animated);
 am4core.useTheme(am4themes_dark);
@@ -126,8 +127,7 @@ am4core.ready(function() {
   container.width = am4core.percent(100);
   container.height = am4core.percent(100);
 
-  container.tooltip = new am4core.Tooltip();
-  container.fontSize = "0.9em";
+  container.tooltip = new am4core.Tooltip();  
   container.tooltip.background.fill = am4core.color("#000000");
   container.tooltip.background.stroke = activeColor;
   container.tooltip.fontSize = "0.9em";
@@ -235,7 +235,7 @@ am4core.ready(function() {
   // if you want bubbles to become bigger when zoomed, set this to false
   imageTemplate.nonScaling = true;
   imageTemplate.strokeOpacity = 0;
-  imageTemplate.fillOpacity = 0.4;
+  imageTemplate.fillOpacity = 0.55;
   imageTemplate.tooltipText = "{name}: [bold]{value}[/]";
   imageTemplate.applyOnClones = true;
 
@@ -402,7 +402,7 @@ am4core.ready(function() {
   // buttons & chart container
   var buttonsAndChartContainer = container.createChild(am4core.Container);
   buttonsAndChartContainer.layout = "vertical";
-  buttonsAndChartContainer.height = am4core.percent(40); // make this bigger if you want more space for the chart
+  buttonsAndChartContainer.height = am4core.percent(45); // make this bigger if you want more space for the chart
   buttonsAndChartContainer.width = am4core.percent(100);
   buttonsAndChartContainer.valign = "bottom";
 
@@ -709,6 +709,7 @@ am4core.ready(function() {
   lineChart.legend.labels.template.fill = am4core.color("#ffffff");
   lineChart.legend.markers.template.height = 8;
   lineChart.legend.contentAlign = "left";
+  //lineChart.legend.fontSize = "10px";
   lineChart.legend.itemContainers.template.valign = "middle";
   var legendDown = false;
   lineChart.legend.itemContainers.template.events.on("down", function() {
@@ -724,6 +725,8 @@ am4core.ready(function() {
   var seriesTypeSwitch = lineChart.legend.createChild(am4core.SwitchButton);
   seriesTypeSwitch.leftLabel.text = "totals";
   seriesTypeSwitch.rightLabel.text = "day change"
+  seriesTypeSwitch.leftLabel.fill = am4core.color("#ffffff");
+  seriesTypeSwitch.rightLabel.fill = am4core.color("#ffffff");
 
   seriesTypeSwitch.events.on("down", function() {
     legendDown = true;
@@ -894,7 +897,8 @@ am4core.ready(function() {
   var label = lineChart.plotContainer.createChild(am4core.Label);
   label.text = "Current day stats may be incomplete until countries submit their data.";
   label.fill = am4core.color("#ffffff");
-  label.fontSize = "0.7em";
+  label.fontSize = "0.8em";
+  label.paddingBottom = 4;
   label.opacity = 0.5;
   label.align = "right";
   label.horizontalCenter = "right";
@@ -914,7 +918,7 @@ am4core.ready(function() {
     var button = buttonsContainer.createChild(am4core.Button)
     button.label.valign = "middle"
     button.label.fill = am4core.color("#ffffff");
-    //    button.label.fontSize = "11px";
+    //button.label.fontSize = "11px";
     button.background.cornerRadius(30, 30, 30, 30);
     button.background.strokeOpacity = 0.3
     button.background.fillOpacity = 0;
@@ -1380,7 +1384,6 @@ am4core.ready(function() {
   function idToName(id) {
     return am4geodata_data_countries2[id] ? am4geodata_data_countries2[id].country : id == "XX" ? "Others" : id;
   }
-
 
   function removeAntarctica(mapData) {
     for (var i = mapData.length - 1; i >= 0; i--) {
