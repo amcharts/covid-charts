@@ -140,7 +140,7 @@ am4core.ready(function() {
   mapChart.zoomControl.align = "right";
   mapChart.zoomControl.marginRight = 15;
   mapChart.zoomControl.valign = "middle";
-  mapChart.homeGeoPoint = {longitude:0, latitude:-2};
+  mapChart.homeGeoPoint = { longitude: 0, latitude: -2 };
 
   // by default minus button zooms out by one step, but we modify the behavior so when user clicks on minus, the map would fully zoom-out and show world data
   mapChart.zoomControl.minusButton.events.on("hit", showWorld);
@@ -645,7 +645,7 @@ am4core.ready(function() {
   dateAxis.renderer.minGridDistance = 50;
   dateAxis.renderer.grid.template.stroke = am4core.color("#000000");
   dateAxis.renderer.grid.template.strokeOpacity = 0.25;
-  dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 3);
+  dateAxis.max = lastDate.getTime() + am4core.time.getDuration("day", 5);
   dateAxis.tooltip.label.fontSize = "0.8em";
   dateAxis.tooltip.background.fill = activeColor;
   dateAxis.tooltip.background.stroke = activeColor;
@@ -658,9 +658,12 @@ am4core.ready(function() {
   // value axis
   // https://www.amcharts.com/docs/v4/concepts/axes/value-axis/
   var valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
+  valueAxis.renderer.opposite = true;
   valueAxis.interpolationDuration = 3000;
   valueAxis.renderer.grid.template.stroke = am4core.color("#000000");
   valueAxis.renderer.grid.template.strokeOpacity = 0.25;
+  valueAxis.renderer.minGridDistance = 30;
+  valueAxis.renderer.maxLabelPosition = 0.98;
   valueAxis.renderer.baseGrid.disabled = true;
   valueAxis.tooltip.disabled = true;
   valueAxis.extraMax = 0.05;
@@ -677,8 +680,10 @@ am4core.ready(function() {
   })
 
   valueAxis.adapter.add("min", function(min, target) {
-    if (min < 0) {
-      min = 0;
+    if (!seriesTypeSwitch.isActive) {
+      if (min < 0) {
+        min = 0;
+      }
     }
     return min;
   })
@@ -686,6 +691,7 @@ am4core.ready(function() {
   // cursor
   // https://www.amcharts.com/docs/v4/concepts/chart-cursor/
   lineChart.cursor = new am4charts.XYCursor();
+  lineChart.cursor.maxTooltipDistance = 0;
   lineChart.cursor.behavior = "none"; // set zoomX for a zooming possibility
   lineChart.cursor.lineY.disabled = true;
   lineChart.cursor.lineX.stroke = activeColor;
@@ -699,6 +705,9 @@ am4core.ready(function() {
   lineChart.legend = new am4charts.Legend();
   lineChart.legend.parent = lineChart.plotContainer;
   lineChart.legend.labels.template.fill = am4core.color("#ffffff");
+  lineChart.legend.markers.template.height = 8;
+  lineChart.legend.contentAlign = "left";
+  lineChart.legend.itemContainers.template.valign = "middle";
   var legendDown = false;
   lineChart.legend.itemContainers.template.events.on("down", function() {
     legendDown = true;
@@ -708,6 +717,66 @@ am4core.ready(function() {
       legendDown = false;
     }, 100)
   })
+
+
+  var seriesTypeSwitch = lineChart.legend.createChild(am4core.SwitchButton);
+  seriesTypeSwitch.leftLabel.text = "totals";
+  seriesTypeSwitch.rightLabel.text = "day change"
+
+  seriesTypeSwitch.events.on("down", function() {
+    legendDown = true;
+  })
+  seriesTypeSwitch.events.on("up", function() {
+    setTimeout(function() {
+      legendDown = false;
+    }, 100)
+  })
+
+  seriesTypeSwitch.events.on("toggled", function() {
+    if (seriesTypeSwitch.isActive) {
+      if (!columnSeries) {
+        createColumnSeries();
+      }
+
+      for (var key in columnSeries) {
+        columnSeries[key].hide(0);
+      }
+
+      for (var key in series) {
+        series[key].hiddenInLegend = true;
+        series[key].hide();
+      }
+
+      columnSeries[currentType].show();
+    }
+    else {
+      for (var key in columnSeries) {
+        columnSeries[key].hiddenInLegend = true;
+        columnSeries[key].hide();
+      }
+
+      for (var key in series) {
+        series[key].hiddenInLegend = false;
+        series[key].hide();
+      }
+
+      series[currentType].show();
+
+    }
+  })
+
+  function updateColumnsFill() {
+    columnSeries.active.columns.each(function(column) {
+      if (column.dataItem.values.valueY.previousChange < 0) {
+        column.fillOpacity = 0;
+        column.strokeOpacity = 0.6;
+      }
+      else {
+        column.fillOpacity = 0.6;
+        column.strokeOpacity = 0;
+      }
+    })
+  }
 
 
   // create series
@@ -729,10 +798,13 @@ am4core.ready(function() {
     series.name = capitalizeFirstLetter(name);
     series.strokeOpacity = 0.6;
     series.stroke = color;
+    series.fill = color;
     series.maskBullets = false;
     series.minBulletDistance = 10;
     series.hidden = true;
     series.hideTooltipWhileZooming = true;
+
+
     // series bullet
     var bullet = series.bullets.push(new am4charts.CircleBullet());
 
@@ -757,10 +829,57 @@ am4core.ready(function() {
     series.tooltip.background.fill = am4core.color("#000000");
     series.tooltip.dy = -4;
     series.tooltip.fontSize = "0.8em";
-    series.tooltipText = "{valueY}";
+    series.tooltipText = "Total {name}: {valueY}";
 
     return series;
   }
+
+
+  var series = { active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries };
+
+  var columnSeries;
+
+  function createColumnSeries() {
+    columnSeries = {}
+    columnSeries.active = addColumnSeries("active", activeColor);
+    columnSeries.active.events.on("validated", function() {
+      updateColumnsFill();
+    })
+
+    columnSeries.confirmed = addColumnSeries("confirmed", confirmedColor);
+    columnSeries.recovered = addColumnSeries("recovered", recoveredColor);
+    columnSeries.deaths = addColumnSeries("deaths", deathsColor);
+  }
+
+  // add series
+  function addColumnSeries(name, color) {
+    var series = lineChart.series.push(new am4charts.ColumnSeries())
+    series.dataFields.valueY = name;
+    series.dataFields.valueYShow = "previousChange";
+    series.dataFields.dateX = "date";
+    series.name = capitalizeFirstLetter(name);
+    series.hidden = true;
+    series.stroke = color;
+    series.fill = color;
+    series.columns.template.fillOpacity = 0.6;
+    series.columns.template.strokeOpacity = 0.6;
+    series.hideTooltipWhileZooming = true;
+    series.clustered = false;
+    series.hiddenInLegend = true;
+    series.columns.template.width = am4core.percent(50);
+
+    // tooltip setup
+    series.tooltip.pointerOrientation = "down";
+    series.tooltip.getStrokeFromObject = true;
+    series.tooltip.getFillFromObject = false;
+    series.tooltip.background.fillOpacity = 0.2;
+    series.tooltip.background.fill = am4core.color("#000000");
+    series.tooltip.fontSize = "0.8em";
+    series.tooltipText = "{name}: {valueY.previousChange.formatNumber('+#,###|#,###|0')}";
+
+    return series;
+  }
+
 
   lineChart.plotContainer.events.on("up", function() {
     if (!legendDown) {
@@ -793,7 +912,7 @@ am4core.ready(function() {
     var button = buttonsContainer.createChild(am4core.Button)
     button.label.valign = "middle"
     button.label.fill = am4core.color("#ffffff");
-//    button.label.fontSize = "11px";
+    //    button.label.fontSize = "11px";
     button.background.cornerRadius(30, 30, 30, 30);
     button.background.strokeOpacity = 0.3
     button.background.fillOpacity = 0;
@@ -877,14 +996,27 @@ am4core.ready(function() {
     lineChart.cursor.lineX.stroke = colors[name];
 
     // show series
-    var activeSeries = series[name];
-    activeSeries.show();
-    // hide other series
-    for (var key in series) {
-      if (series[key] != activeSeries) {
-        series[key].hide();
+    if (seriesTypeSwitch.isActive) {
+      var activeSeries = columnSeries[name];
+      activeSeries.show();
+      // hide other series
+      for (var key in columnSeries) {
+        if (columnSeries[key] != activeSeries) {
+          columnSeries[key].hide();
+        }
       }
     }
+    else {
+      var activeSeries = series[name];
+      activeSeries.show();
+      // hide other series
+      for (var key in series) {
+        if (series[key] != activeSeries) {
+          series[key].hide();
+        }
+      }
+    }
+
     // update heat rule's maxValue
     bubbleSeries.heatRules.getIndex(0).maxValue = max[name];
     polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
@@ -1091,7 +1223,7 @@ am4core.ready(function() {
         lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
       }
       for (var key in buttons) {
-        buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.data[index][key];
+        buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.numberFormatter.format(lineChart.data[index][key], '#,###');
       }
       currentIndex = index;
     }
@@ -1208,35 +1340,36 @@ am4core.ready(function() {
   setTimeout(updateSeriesTooltip, 3000);
 
   function updateCountryTooltip() {
-    polygonSeries.mapPolygons.template.tooltipText = "[bold]{name}: {value.formatNumber('#.')}[/]\n[font-size:10px]" + currentTypeName + " per million"    
+    polygonSeries.mapPolygons.template.tooltipText = "[bold]{name}: {value.formatNumber('#.')}[/]\n[font-size:10px]" + currentTypeName + " per million"
   }
 
   /**
    * Country/state list on the right
    */
-  function populateCountries(list) {
-    var table = $("#areas tbody");
-    table.find(".area").remove();
-    for (var i = 0; i < list.length; i++) {
-      var area = list[i];
-      var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
-        selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-      }).hover(function() {
-        rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-      });
-      $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
-      $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
-      $("<td>").addClass("value").appendTo(tr).html(area.deaths);
-      $("<td>").addClass("value").appendTo(tr).html(area.recovered);
+  
+ function populateCountries(list) {
+   var table = $("#areas tbody");
+   table.find(".area").remove();
+   for (var i = 0; i < list.length; i++) {
+     var area = list[i];
+     var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
+       selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+     }).hover(function() {
+       rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+     });
+     $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
+     $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
+     $("<td>").addClass("value").appendTo(tr).html(area.deaths);
+     $("<td>").addClass("value").appendTo(tr).html(area.recovered);
 
-    }
-    $("#areas").DataTable({
-      "paging": false,
-      "select": true
-    }).column("1")
-      .order("desc")
-      .draw();;
-  }
+   }
+   $("#areas").DataTable({
+     "paging": false,
+     "select": true
+   }).column("1")
+     .order("desc")
+     .draw();;
+ }
 
 
   function idToName(id) {
@@ -1244,12 +1377,12 @@ am4core.ready(function() {
   }
 
 
-  function removeAntarctica(mapData){
+  function removeAntarctica(mapData) {
     for (var i = mapData.length - 1; i >= 0; i--) {
       if (mapData[i].id == "AQ") {
         mapData.splice(i, 1);
       }
-    }  
+    }
   }
 
   var populations = {
