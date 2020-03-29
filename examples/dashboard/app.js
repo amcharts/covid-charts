@@ -10,6 +10,8 @@
  * ---------------------------------------
  */
 
+
+
 // Themes begin
 am4core.useTheme(am4themes_animated);
 am4core.useTheme(am4themes_dark);
@@ -86,6 +88,7 @@ am4core.ready(function() {
 
   // as we will be modifying raw data, make a copy
   var mapData = JSON.parse(JSON.stringify(slideData.list));
+
   var max = { confirmed: 0, recovered: 0, deaths: 0 };
   var maxPC = { confirmed: 0, recovered: 0, deaths: 0, active: 0 };
 
@@ -117,6 +120,7 @@ am4core.ready(function() {
   container.height = am4core.percent(100);
 
   container.tooltip = new am4core.Tooltip();
+  container.fontSize = "0.9em";
   container.tooltip.background.fill = am4core.color("#000000");
   container.tooltip.background.stroke = activeColor;
   container.tooltip.fontSize = "0.9em";
@@ -131,6 +135,7 @@ am4core.ready(function() {
   mapChart.zoomControl.align = "right";
   mapChart.zoomControl.marginRight = 15;
   mapChart.zoomControl.valign = "middle";
+  mapChart.homeGeoPoint = {longitude:0, latitude:-2};
 
   // by default minus button zooms out by one step, but we modify the behavior so when user clicks on minus, the map would fully zoom-out and show world data
   mapChart.zoomControl.minusButton.events.on("hit", showWorld);
@@ -331,6 +336,7 @@ am4core.ready(function() {
       mapChart.projection = new am4maps.projections.Miller;
       mapChart.backgroundSeries.hide();
       mapChart.panBehavior = "move";
+      removeAntarctica(mapData);
       polygonSeries.data = mapData;
       polygonSeries.exclude = ["AQ"];
     }
@@ -509,7 +515,7 @@ am4core.ready(function() {
   sizeLabel.text = "max bubble size *";
   sizeLabel.fill = am4core.color("#ffffff");
   sizeLabel.rotation = 90;
-  sizeLabel.fontSize = "0.8em";
+  sizeLabel.fontSize = "10px";
   sizeLabel.fillOpacity = 0.5;
   sizeLabel.horizontalCenter = "middle";
   sizeLabel.align = "left"
@@ -570,6 +576,7 @@ am4core.ready(function() {
   var filterLabel = container.createChild(am4core.Label);
   filterLabel.text = "filter max values *";
   filterLabel.rotation = 90;
+  filterLabel.fontSize = "10px";
   filterLabel.fill = am4core.color("#ffffff");
   filterLabel.fontSize = "0.8em";
   filterLabel.fillOpacity = 0.5;
@@ -780,7 +787,7 @@ am4core.ready(function() {
     var button = buttonsContainer.createChild(am4core.Button)
     button.label.valign = "middle"
     button.label.fill = am4core.color("#ffffff");
-    button.fontSize = "1em";
+//    button.label.fontSize = "11px";
     button.background.cornerRadius(30, 30, 30, 30);
     button.background.strokeOpacity = 0.3
     button.background.fillOpacity = 0;
@@ -1191,15 +1198,15 @@ am4core.ready(function() {
   updateCountryName();
   changeDataType("active");
 
-  polygonSeries.events.on("datavalidated", function() {
-    populateCountries(slideData.list);
-  });
-
   setTimeout(updateSeriesTooltip, 3000);
 
   function updateCountryTooltip() {
     polygonSeries.mapPolygons.template.tooltipText = "[bold]{name}: {value.formatNumber('#.')}[/]\n[font-size:10px]" + currentTypeName + " per million"
   }
+
+  polygonSeries.events.once("datavalidated", function() {
+    populateCountries(slideData.list);
+  });
 
   /**
    * Country/state list on the right
@@ -1234,6 +1241,14 @@ am4core.ready(function() {
       .draw();;
   }
 
+
+  function removeAntarctica(mapData){
+    for (var i = mapData.length - 1; i >= 0; i--) {
+      if (mapData[i].id == "AQ") {
+        mapData.splice(i, 1);
+      }
+    }  
+  }
 
   var populations = {
     "AD": "84000",
