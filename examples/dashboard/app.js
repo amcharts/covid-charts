@@ -19,6 +19,8 @@ am4core.useTheme(am4themes_dark);
 
 am4core.ready(function() {
 
+  var numberFormatter = new am4core.NumberFormatter();
+
   var backgroundColor = am4core.color("#1e2128");
   var activeColor = am4core.color("#ff8726");
   var confirmedColor = am4core.color("#d21a1a");
@@ -862,7 +864,7 @@ am4core.ready(function() {
     series.stroke = color;
     series.fill = color;
     series.columns.template.fillOpacity = 0.6;
-    series.columns.template.strokeOpacity = 0.6;
+    series.columns.template.strokeOpacity = 0;
     series.hideTooltipWhileZooming = true;
     series.clustered = false;
     series.hiddenInLegend = true;
@@ -1223,8 +1225,9 @@ am4core.ready(function() {
         lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
       }
       for (var key in buttons) {
-        if (am4core.type.isNumber(lineChart.data[index][key])) {
-          buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.numberFormatter.format(lineChart.data[index][key], '#,###');
+        var count = Number(lineChart.data[index][key])
+        if (!isNaN(count)) {
+          buttons[key].label.text = capitalizeFirstLetter(key) + ": " + numberFormatter.format(count, '#,###');
         }
       }
       currentIndex = index;
