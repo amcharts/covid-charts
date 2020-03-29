@@ -83,7 +83,7 @@ am4core.ready(function() {
     // augment with names
     for (var i = 0; i < data.list.length; i++) {
       data.list[i].name = idToName(data.list[i].id);
-    }    
+    }
 
     return data;
   }
@@ -1223,7 +1223,9 @@ am4core.ready(function() {
         lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
       }
       for (var key in buttons) {
-        buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.numberFormatter.format(lineChart.data[index][key], '#,###');
+        if (am4core.type.isNumber(lineChart.data[index][key])) {
+          buttons[key].label.text = capitalizeFirstLetter(key) + ": " + lineChart.numberFormatter.format(lineChart.data[index][key], '#,###');
+        }
       }
       currentIndex = index;
     }
@@ -1346,30 +1348,30 @@ am4core.ready(function() {
   /**
    * Country/state list on the right
    */
-  
- function populateCountries(list) {
-   var table = $("#areas tbody");
-   table.find(".area").remove();
-   for (var i = 0; i < list.length; i++) {
-     var area = list[i];
-     var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
-       selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-     }).hover(function() {
-       rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-     });
-     $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
-     $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
-     $("<td>").addClass("value").appendTo(tr).html(area.deaths);
-     $("<td>").addClass("value").appendTo(tr).html(area.recovered);
 
-   }
-   $("#areas").DataTable({
-     "paging": false,
-     "select": true
-   }).column("1")
-     .order("desc")
-     .draw();;
- }
+  function populateCountries(list) {
+    var table = $("#areas tbody");
+    table.find(".area").remove();
+    for (var i = 0; i < list.length; i++) {
+      var area = list[i];
+      var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
+        selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+      }).hover(function() {
+        rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
+      });
+      $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
+      $("<td>").addClass("value").appendTo(tr).html(area.confirmed);
+      $("<td>").addClass("value").appendTo(tr).html(area.deaths);
+      $("<td>").addClass("value").appendTo(tr).html(area.recovered);
+
+    }
+    $("#areas").DataTable({
+      "paging": false,
+      "select": true
+    }).column("1")
+      .order("desc")
+      .draw();;
+  }
 
 
   function idToName(id) {
