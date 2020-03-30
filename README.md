@@ -20,7 +20,7 @@ Both chart templates and data provided AS IS. Take it, fork it, modify it, use i
 
 No attribution to amCharts is required.
 
-We provide charts and data. We DO NOT provide hosting. So please, people, grab and put those charts on your own server. Don't load individual files or the whole example dashboard off our demo server.
+We provide charts and data. We DO NOT provide hosting. So please, people, grab and put those charts on your own server. Or, if you're lazy, just drop the dashboard into a `<iframe>` or something :)
 
 ## Data
 ### Source
