@@ -97,6 +97,14 @@ am4core.ready(function() {
   // as we will be modifying raw data, make a copy
   var mapData = JSON.parse(JSON.stringify(slideData.list));
 
+  // remove items with 0 values for better performance
+  for(var i = mapData.length - 1; i >= 0; i--){
+    if(mapData[i].confirmed == 0){
+      mapData.splice(i, 1);
+    }
+  }
+
+
   var max = { confirmed: 0, recovered: 0, deaths: 0 };
   var maxPC = { confirmed: 0, recovered: 0, deaths: 0, active: 0 };
 
@@ -217,8 +225,9 @@ am4core.ready(function() {
   polygonActiveState.properties.fill = activeCountryColor;
 
   // Bubble series
-  var bubbleSeries = mapChart.series.push(new am4maps.MapImageSeries());
-  bubbleSeries.data = mapData;
+  var bubbleSeries = mapChart.series.push(new am4maps.MapImageSeries());  
+  bubbleSeries.data = JSON.parse(JSON.stringify(mapData));
+
   bubbleSeries.dataFields.value = "confirmed";
   bubbleSeries.dataFields.id = "id";
 
@@ -666,7 +675,7 @@ am4core.ready(function() {
   valueAxis.renderer.grid.template.strokeOpacity = 0.25;
   valueAxis.renderer.minGridDistance = 30;
   valueAxis.renderer.maxLabelPosition = 0.98;
-  valueAxis.renderer.baseGrid.disabled = true;
+  //valueAxis.renderer.baseGrid.disabled = true;
   valueAxis.tooltip.disabled = true;
   valueAxis.extraMax = 0.05;
   valueAxis.maxPrecision = 0;
@@ -1140,6 +1149,7 @@ am4core.ready(function() {
       // make bubble hovered too
       var image = bubbleSeries.getImageById(mapPolygon.dataItem.id);
       if (image) {
+        image.dataItem.dataContext.name = mapPolygon.dataItem.dataContext.name;
         image.isHover = true;
       }
     }
