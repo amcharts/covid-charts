@@ -4,7 +4,10 @@ This is a changelog of amCharts COVID-19 coverage templates/data project.
 
 Updates are not versioned. This log includes only noteworthy updates.
 
-## 2020-03-2
+## 2020-04-03
+- Added experimental current and timeline data for U.S. states.
+
+## 2020-03-28
 - Dashboard now allows switching between daily and cummulative data.
 
 ## 2020-03-24

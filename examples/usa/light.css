@@ -1,0 +1,77 @@
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	background-color: #fff;
+	color: #212327;
+	padding: 0px;
+	margin: 0px;
+}
+
+.flexbox {
+	display: flex;
+}
+
+#chartdiv {
+	flex: 1;
+	height: 100vh;
+	float: left;
+}
+
+#list {
+	padding: 0.5em;
+	flex: 0 0 500px;
+	height: 100vh;
+	float: left;
+	border-left: 1px solid #eee;
+	box-sizing: border-box;
+	overflow: auto;
+}
+
+table.dataTable tbody tr {
+	background-color: inherit;
+}
+
+td.value {
+	text-align: right;
+}
+
+table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.dataTable.display tbody th, table.dataTable.display tbody td {
+	border-top: 1px solid #555;
+}
+
+table.dataTable.order-column tbody tr>.sorting_1, table.dataTable.order-column tbody tr>.sorting_2, table.dataTable.order-column tbody tr>.sorting_3, table.dataTable.display tbody tr>.sorting_1, table.dataTable.display tbody tr>.sorting_2, table.dataTable.display tbody tr>.sorting_3 {
+	background-color: #35373A;
+}
+
+table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
+	background-color: #0F0F0F;
+	color: #ff8726;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+	background-color: #1B1B1B;
+	color: #ff8726;
+}
+
+table.dataTable.hover tbody>tr.selected:hover, table.dataTable.hover tbody>tr>.selected:hover, table.dataTable.display tbody>tr.selected:hover, table.dataTable.display tbody>tr>.selected:hover {
+	background-color: #1B1B1B;
+	color: #ff8726;
+}
+
+table.dataTable.order-column tbody>tr.selected>.sorting_1, table.dataTable.order-column tbody>tr.selected>.sorting_2, table.dataTable.order-column tbody>tr.selected>.sorting_3, table.dataTable.order-column tbody>tr>.selected, table.dataTable.display tbody>tr.selected>.sorting_1, table.dataTable.display tbody>tr.selected>.sorting_2, table.dataTable.display tbody>tr.selected>.sorting_3, table.dataTable.display tbody>tr>.selected {
+	background-color: #0F0F0F;
+}
+
+table.dataTable.display tbody>tr.selected:hover>.sorting_1, table.dataTable.order-column.hover tbody>tr.selected:hover>.sorting_1 {
+	background-color: #1B1B1B;
+}
+
+table.dataTable.display tbody tr:hover>.sorting_1, table.dataTable.order-column.hover tbody tr:hover>.sorting_1 {
+	background-color: #1B1B1B;
+}ckground-color: #000;
+}
+
+@media screen and (max-width: 1000px) {
+	#list {
+		display: none;
+	}
+}
