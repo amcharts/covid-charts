@@ -6,6 +6,7 @@ Updates are not versioned. This log includes only noteworthy updates.
 
 ## 2020-04-03
 - Added experimental current and timeline data for U.S. states.
+- Added beta version of U.S. dashboard example (`examples/usa`).
 
 ## 2020-03-28
 - Dashboard now allows switching between daily and cummulative data.
