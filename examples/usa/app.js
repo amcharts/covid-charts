@@ -154,7 +154,7 @@ am4core.ready(function() {
 
 
 	var max = { confirmed: 0, deaths: 0 };
-	var maxPC = { confirmed: 0, deaths: 0 };
+	//var maxPC = { confirmed: 0, deaths: 0 };
 
 	// the last day will have most
 	for (var i = 0; i < mapData.length; i++) {
@@ -388,7 +388,7 @@ am4core.ready(function() {
 			perCapita = true;
 			bubbleSeries.interpolationDuration = 0;
 			polygonSeries.heatRules.getIndex(0).max = colors[currentType];
-			polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
+			//polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
 			polygonSeries.mapPolygons.template.applyOnClones = true;
 
 			sizeSlider.hide()
@@ -1033,7 +1033,7 @@ am4core.ready(function() {
 
 		// update heat rule's maxValue
 		bubbleSeries.heatRules.getIndex(0).maxValue = max[currentType];
-		polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
+		//polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
 		if (perCapita) {
 			polygonSeries.heatRules.getIndex(0).max = colors[name];
 			updateCountryTooltip();
@@ -1236,7 +1236,7 @@ am4core.ready(function() {
 			dataItem.dataContext.deaths = 0;
 		})
 
-		maxPC = { confirmed: 0, deaths: 0 };
+		//maxPC = { confirmed: 0, deaths: 0 };
 
 		for (var i = 0; i < data.length; i++) {
 			var di = data[i];
@@ -1254,17 +1254,16 @@ am4core.ready(function() {
 				polygon.dataItem.dataContext.confirmedPC = di.confirmed / population * 1000000;
 				polygon.dataItem.dataContext.deathsPC = di.deaths / population * 1000000;
 
-				if (polygon.dataItem.dataContext.confirmedPC > maxPC.confirmed) {
+				/*if (polygon.dataItem.dataContext.confirmedPC > maxPC.confirmed) {
 					maxPC.confirmed = polygon.dataItem.dataContext.confirmedPC;
 				}
 				if (polygon.dataItem.dataContext.deathsPC > maxPC.deaths) {
 					maxPC.deaths = polygon.dataItem.dataContext.deathsPC;
-				}
-
+				}*/
 			}
 
 			bubbleSeries.heatRules.getIndex(0).maxValue = max[currentType];
-			polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
+			//polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
 
 			bubbleSeries.invalidateRawData();
 			polygonSeries.invalidateRawData();
