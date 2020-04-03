@@ -92,7 +92,7 @@ am4core.ready(function() {
 	var activeCountryColor = am4core.color("#0f0f0f");
 
 	var currentIndex;
-	var currentCountry = "United States (total)";
+	var currentCountry = "United States (Total)";
 
 	// last date of the data
 	var lastDate = new Date(covid_us_total_timeline[covid_us_total_timeline.length - 1].date);
@@ -361,7 +361,7 @@ am4core.ready(function() {
 	// top title
 	var title = mapChart.titles.create();
 	title.fontSize = "1.5em";
-	title.text = "COVID-19 Spread Data";
+	title.text = "COVID-19 U.S. Spread Data";
 	title.align = "left";
 	title.horizontalCenter = "left";
 	title.marginLeft = 20;
