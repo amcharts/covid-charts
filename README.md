@@ -13,7 +13,7 @@ Please note that statistics collection, especially in early days of pandemic was
 Feel free to modify examples to use your own data instead.
 
 ## Examples
-Example dashboard is posted [here](https://covid.amcharts.com).
+Example dashboards: [World](https://covid.amcharts.com) and [United States](https://covid.amcharts.com/us).
 
 ## Usage
 Both chart templates and data provided AS IS. Take it, fork it, modify it, use it on your own.
@@ -37,6 +37,9 @@ If you notice any irregularities, please do let us know by opening an [issue](ht
 
 ### Update frequency
 Data is updated roughly once per hour.
+
+### United States data
+Data for U.S. does not contain numbers of recovered cases.
 
 ## Files
 We have a request: please download and put all the files required for displaying the charts on your websites. Due to high demand for this kind of information, it might put a huge load on our servers, something they might not be able to handle. We're giving this away for free, please help us by easing the load.
