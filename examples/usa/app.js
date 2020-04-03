@@ -1041,21 +1041,9 @@ am4core.ready(function() {
     updateCountryName();
 
     mapPolygon.isActive = true;
-    // meaning it's globe
-    if (mapGlobeSwitch.isActive) {
-      // animate deltas (results the map to be rotated to the selected country)
-      if (mapChart.zoomLevel != 1) {
-        mapChart.goHome();
-        rotateAndZoom(mapPolygon);
-      }
-      else {
-        rotateAndZoom(mapPolygon);
-      }
-    }
-    // if it's not a globe, simply zoom to the country
-    else {
-      mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
-    }
+
+    // zoom to state
+    mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
   }
 
   // change line chart data to the selected countries  
