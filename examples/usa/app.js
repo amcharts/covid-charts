@@ -194,7 +194,7 @@ am4core.ready(function() {
 	mapChart.zoomControl.align = "right";
 	mapChart.zoomControl.marginRight = 15;
 	mapChart.zoomControl.valign = "middle";
-	
+
 	// by default minus button zooms out by one step, but we modify the behavior so when user clicks on minus, the map would fully zoom-out and show world data
 	mapChart.zoomControl.minusButton.events.on("hit", showWorld);
 
@@ -378,7 +378,7 @@ am4core.ready(function() {
 	absolutePerCapitaSwitch.rightLabel.fill = am4core.color("#ffffff");
 	absolutePerCapitaSwitch.rightLabel.text = "Per Capita";
 	absolutePerCapitaSwitch.rightLabel.interactionsEnabled = true;
-	absolutePerCapitaSwitch.rightLabel.tooltipText = "When calculating max value, countries with population less than 100.000 are not included."
+	//absolutePerCapitaSwitch.rightLabel.tooltipText = "When calculating max value, countries with population less than 100.000 are not included."
 	absolutePerCapitaSwitch.verticalCenter = "top";
 
 
@@ -550,7 +550,7 @@ am4core.ready(function() {
 	sizeLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
 	sizeLabel.tooltip.label.wrap = true;
 	sizeLabel.tooltip.label.maxWidth = 300;
-	sizeLabel.tooltipText = "Some countries have so many cases that bubbles for countries with smaller values often look the same even if there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relatively small values you could compare them anyway."
+	sizeLabel.tooltipText = "Some states have so many cases that bubbles for states with smaller values often look the same even if there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relatively small values you could compare them anyway."
 	sizeLabel.fill = am4core.color("#ffffff");
 
 	sizeLabel.adapter.add("y", function(y, target) {
@@ -612,7 +612,7 @@ am4core.ready(function() {
 	filterLabel.paddingBottom = 40;
 	filterLabel.tooltip.label.wrap = true;
 	filterLabel.tooltip.label.maxWidth = 300;
-	filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with smaller number of cases."
+	filterLabel.tooltipText = "This filter allows to remove states with many cases from the map so that it would be possible to compare states with smaller number of cases."
 	filterLabel.fill = am4core.color("#ffffff");
 
 	filterLabel.adapter.add("y", function(y, target) {
@@ -905,7 +905,7 @@ am4core.ready(function() {
 
 	// data warning label
 	var label = lineChart.plotContainer.createChild(am4core.Label);
-	label.text = "Current day stats may be incomplete until countries submit their data.";
+	label.text = "Current day stats may be incomplete.";
 	label.fill = am4core.color("#ffffff");
 	label.fontSize = "0.8em";
 	label.paddingBottom = 4;
@@ -1080,7 +1080,7 @@ am4core.ready(function() {
 		mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
 	}
 
-	// change line chart data to the selected countries  
+	// change line chart data to the selected states  
 	function setCountryData(countryIndex) {
 		// instead of setting whole data array, we modify current raw data so that a nice animation would happen
 		for (var i = 0; i < lineChart.data.length; i++) {
@@ -1254,14 +1254,13 @@ am4core.ready(function() {
 				polygon.dataItem.dataContext.confirmedPC = di.confirmed / population * 1000000;
 				polygon.dataItem.dataContext.deathsPC = di.deaths / population * 1000000;
 
-				if (population > 100000) {
-					if (polygon.dataItem.dataContext.confirmedPC > maxPC.confirmed) {
-						maxPC.confirmed = polygon.dataItem.dataContext.confirmedPC;
-					}
-					if (polygon.dataItem.dataContext.deathsPC > maxPC.deaths) {
-						maxPC.deaths = polygon.dataItem.dataContext.deathsPC;
-					}
+				if (polygon.dataItem.dataContext.confirmedPC > maxPC.confirmed) {
+					maxPC.confirmed = polygon.dataItem.dataContext.confirmedPC;
 				}
+				if (polygon.dataItem.dataContext.deathsPC > maxPC.deaths) {
+					maxPC.deaths = polygon.dataItem.dataContext.deathsPC;
+				}
+
 			}
 
 			bubbleSeries.heatRules.getIndex(0).maxValue = max[currentType];
