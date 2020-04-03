@@ -685,6 +685,7 @@ am4core.ready(function() {
 	valueAxis.renderer.grid.template.strokeOpacity = 0.25;
 	valueAxis.renderer.minGridDistance = 30;
 	valueAxis.renderer.maxLabelPosition = 0.98;
+	valueAxis.min = 0;
 	//valueAxis.renderer.baseGrid.disabled = true;
 	valueAxis.tooltip.disabled = true;
 	valueAxis.extraMax = 0.05;
