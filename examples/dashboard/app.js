@@ -1012,28 +1012,28 @@ am4core.ready(function() {
 
     // show series
     if (seriesTypeSwitch.isActive) {
-      var activeSeries = columnSeries[name];
-      activeSeries.show();
+      var currentSeries = columnSeries[name];
+      currentSeries.show();
       // hide other series
       for (var key in columnSeries) {
-        if (columnSeries[key] != activeSeries) {
+        if (columnSeries[key] != currentSeries) {
           columnSeries[key].hide();
         }
       }
     }
     else {
-      var activeSeries = series[name];
-      activeSeries.show();
+      var currentSeries = series[name];
+      currentSeries.show();
       // hide other series
       for (var key in series) {
-        if (series[key] != activeSeries) {
+        if (series[key] != currentSeries) {
           series[key].hide();
         }
       }
     }
 
     // update heat rule's maxValue
-    bubbleSeries.heatRules.getIndex(0).maxValue = max[name];
+    bubbleSeries.heatRules.getIndex(0).maxValue = max[currentType];
     polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
     if (perCapita) {
       polygonSeries.heatRules.getIndex(0).max = colors[name];
@@ -1297,7 +1297,7 @@ am4core.ready(function() {
         }
       }
 
-      bubbleSeries.heatRules.getIndex(0).maxValue = max[name];
+      bubbleSeries.heatRules.getIndex(0).maxValue = max[currentType];
       polygonSeries.heatRules.getIndex(0).maxValue = maxPC[currentType];
 
       bubbleSeries.invalidateRawData();
