@@ -471,7 +471,7 @@ am4core.ready(function() {
 
 
   // you can have pacific - centered map if you set this to -154.8
-  mapChart.deltaLongitude = -10;
+  mapChart.deltaLongitude = -8;
 
   // polygon states
   var polygonHoverState = polygonTemplate.states.create("hover");
