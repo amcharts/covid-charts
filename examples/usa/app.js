@@ -1016,7 +1016,7 @@ am4core.ready(function() {
 			// hide other series
 			for (var key in columnSeries) {
 				if (columnSeries[key] != currentSeries) {
-					currentSeries[key].hide();
+					columnSeries[key].hide();
 				}
 			}
 		}
