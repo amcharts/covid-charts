@@ -13,7 +13,7 @@ Please note that statistics collection, especially in early days of pandemic was
 Feel free to modify examples to use your own data instead.
 
 ## Examples
-Example dashboards: [World](https://covid.amcharts.com) and [United States](https://covid.amcharts.com/us).
+Example dashboards: [World](https://https://covid-19-updates.cyberian.pk/examples/dashboard/) and [Pakistan](https://https://covid-19-updates.cyberian.pk/examples/dashboard/pk).
 
 ## Usage
 Both chart templates and data provided AS IS. Take it, fork it, modify it, use it on your own.
@@ -33,7 +33,7 @@ Data files located in this repo are not copies of the original source files but 
 The global data is collected from a lot of local sources, which update at irregular intervals and delays. This means that the data for current day may be (and probably is) incomplete and will be updated as new data comes in from world regions.
 
 ### Data irregularities
-If you notice any irregularities, please do let us know by opening an [issue](https://github.com/amcharts/covid-charts/issues).
+If you notice any irregularities, please do let us know by opening an [issue](https://github.com/zaasmi/covid-charts/issues).
 
 ### Update frequency
 Data is updated roughly once per hour.
@@ -45,11 +45,11 @@ Data for U.S. does not contain numbers of recovered cases.
 We have a request: please download and put all the files required for displaying the charts on your websites. Due to high demand for this kind of information, it might put a huge load on our servers, something they might not be able to handle. We're giving this away for free, please help us by easing the load.
 
 ## Maps
-Not happy with the border layout of the default map? We have [different versions](https://github.com/amcharts/covid-charts/tree/master/deps/amcharts4-geodata) for India, China, Russia, and Morocco. Just replace `worldLow` in HTML and JS to `worldIndia`, `worldChina`, `worldRussia`, or `worldMorocco`.
+Not happy with the border layout of the default map? We have [different versions](https://github.com/zaasmi/covid-charts/tree/master/deps/amcharts4-geodata) for India, China, Russia, and Morocco. Just replace `worldLow` in HTML and JS to `worldIndia`, `worldChina`, `worldRussia`, or `worldMorocco`.
 
 ## Technology
 ### Charts and maps
-The chart, map and dashboard examples use amCharts 4 product; copyright amCharts. You can use and integrate the charts for free as long as you adhere to the [free use license from amCharts](https://github.com/amcharts/amcharts4#license).
+The chart, map and dashboard examples use amCharts 4 product; copyright amCharts. You can use and integrate the charts for free as long as you adhere to the [free use license from amCharts](https://github.com/zaasmi/amcharts4#license).
 
 ### 3rd party libraries
 Examples use these thord party libraries:
@@ -65,6 +65,6 @@ If you want to contribute to this repository, create a pull request. Although, w
 ## Support
 Please do understand that we have absolutely no capacity to provide any kind of technical support for these maps and charts.
 
-If you think you found a bug, please consider [opening an issue](https://github.com/amcharts/covid-charts/issues).
+If you think you found a bug, please consider [opening an issue](https://github.com/zaasmi/covid-charts/issues).
 
 Questions and support requests will be ignored. Sorry, but we simply have too much on our plates right now.
