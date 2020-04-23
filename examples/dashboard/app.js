@@ -581,7 +581,7 @@ am4core.ready(function() {
   // top title
   var title = mapChart.titles.create();
   title.fontSize = "1.5em";
-  title.text = "COVID-19 World Spread Data";
+  title.text = "COVID-19 Spread Data";
   title.align = "left";
   title.horizontalCenter = "left";
   title.marginLeft = 20;
