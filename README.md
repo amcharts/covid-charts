@@ -13,7 +13,7 @@ Please note that statistics collection, especially in early days of pandemic was
 Feel free to modify examples to use your own data instead.
 
 ## Examples
-Example dashboards: [World](https://covid-19-updates.cyberian.pk/examples/dashboard/) and [Pakistan](https://covid-19-updates.cyberian.pk/examples/dashboard/pk).
+Example dashboards: [World](https://covid-19-updates.cyberian.pk/examples/dashboard/) and [Pakistan](https://covid-19-updates.cyberian.pk/examples/dashboard/).
 
 ## Usage
 Both chart templates and data provided AS IS. Take it, fork it, modify it, use it on your own.
@@ -45,7 +45,7 @@ Data for U.S. does not contain numbers of recovered cases.
 We have a request: please download and put all the files required for displaying the charts on your websites. Due to high demand for this kind of information, it might put a huge load on our servers, something they might not be able to handle. We're giving this away for free, please help us by easing the load.
 
 ## Maps
-Not happy with the border layout of the default map? We have [different versions](https://github.com/zaasmi/covid-charts/tree/master/deps/amcharts4-geodata) for India, China, Russia, and Morocco. Just replace `worldLow` in HTML and JS to `worldIndia`, `worldChina`, `worldRussia`, or `worldMorocco`.
+Not happy with the border layout of the default map? We have [different versions](https://github.com/zaasmi/covid-charts/tree/master/deps/amcharts4-geodata) for Pakistan, China, Russia, and Morocco. Just replace `worldLow` in HTML and JS to `worldIndia`, `worldChina`, `worldRussia`, or `worldMorocco`.
 
 ## Technology
 ### Charts and maps
