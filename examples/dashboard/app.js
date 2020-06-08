@@ -328,7 +328,7 @@ am4core.ready(function() {
   // calculated active cases in world data (active = confirmed - recovered)
   for (var i = 0; i < covid_total_timeline.length; i++) {
     var di = covid_total_timeline[i];
-    di.active = di.confirmed - di.recovered;
+    di.active = di.confirmed - di.recovered - di.deaths;
   }
 
   // function that returns current slide
@@ -1463,7 +1463,7 @@ am4core.ready(function() {
       dataContext.recovered = di.recovered;
       dataContext.confirmed = di.confirmed;
       dataContext.deaths = di.deaths;
-      dataContext.active = di.confirmed - di.recovered;
+      dataContext.active = di.confirmed - di.recovered - di.deaths;
       valueAxis.min = undefined;
       valueAxis.max = undefined;
     }
