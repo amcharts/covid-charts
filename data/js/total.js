@@ -1,1 +1,1 @@
-var covid_total_current = {"confirmed":168093701,"deaths":3492129,"recovered":105003367,"date":"2021-05-26"}
+var covid_total_current = {"confirmed":168155048,"deaths":3493246,"recovered":105046912,"date":"2021-05-26"}
