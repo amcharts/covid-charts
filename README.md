@@ -52,7 +52,7 @@ Not happy with the border layout of the default map? We have [different versions
 The chart, map and dashboard examples use amCharts 4 product; copyright amCharts. You can use and integrate the charts for free as long as you adhere to the [free use license from amCharts](https://github.com/amcharts/amcharts4#license).
 
 ### 3rd party libraries
-Examples use these thord party libraries:
+Examples use these third party libraries:
 
 * [jQuery](https://jquery.com/)
 * [DataTables](https://datatables.net/)
