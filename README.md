@@ -13,7 +13,7 @@ Please note that statistics collection, especially in early days of pandemic was
 Feel free to modify examples to use your own data instead.
 
 ## Examples
-Example dashboards: [World](https://covid.amcharts.com) and [United States](https://covid.amcharts.com/us).
+Example dashboards: [World](https://covid-19-updates.cyberian.pk/examples/dashboard/) and [United States](https://covid-19-updates.cyberian.pk/examples/usa).
 
 ## Usage
 Both chart templates and data provided AS IS. Take it, fork it, modify it, use it on your own.
