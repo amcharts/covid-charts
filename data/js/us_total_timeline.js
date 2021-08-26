@@ -1,1 +1,1 @@
-var covid_us_total_timeline = [{"confirmed":38046049,"deaths":629323,"recovered":0,"date":"2021-08-26"}]
+var covid_us_total_timeline = [{"confirmed":38060771,"deaths":629460,"recovered":0,"date":"2021-08-26"}]
