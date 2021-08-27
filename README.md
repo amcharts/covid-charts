@@ -4,13 +4,7 @@ A collection of JavaScript-based data visualization tools and data for depicting
 If you are a news agency, online publisher, or simple blogger, you can use these tools and chart templates to quickly drop in data visualization to your website.
 
 ## Important disclaimer
-WE DO NOT GUARANTEE ACCURACY OF THE DATA. PLEASE USE IT AS A VISUAL AID ONLY, AND DO NOT BASE ANY DECISION MEDICAL OR LOGISTICAL BASED ON THE DATA PROVIDED IN THESE CHARTS OR DATA FILES.
-
-Treat the data included here as a sample data, which might be (and probably is) NOT up-to-date and contain (and probably does) contain some calculational errors, especially in historical numbers.
-
-Please note that statistics collection, especially in early days of pandemic was erratic, patchy, and not systemized.
-
-Feel free to modify examples to use your own data instead.
+THE DATA USED IN THIS REPOSITORY IS NOT BEING UPDATED AND CANNOT BE CONSIDERED CURRENT OR ACCURATE. USE IT ONLY FOR REFERENCE, NOT AS A REALISTIC STATISTICAL DATA.
 
 ## Examples
 Example dashboards: [World](https://covid.amcharts.com) and [United States](https://covid.amcharts.com/us).
@@ -32,11 +26,8 @@ Data files located in this repo are not copies of the original source files but 
 ### Current day
 The global data is collected from a lot of local sources, which update at irregular intervals and delays. This means that the data for current day may be (and probably is) incomplete and will be updated as new data comes in from world regions.
 
-### Data irregularities
-If you notice any irregularities, please do let us know by opening an [issue](https://github.com/amcharts/covid-charts/issues).
-
 ### Update frequency
-Data is updated roughly once per hour.
+As of June 24, 2021 data is not being updated anymore.
 
 ### United States data
 Data for U.S. does not contain numbers of recovered cases.
@@ -64,7 +55,3 @@ If you want to contribute to this repository, create a pull request. Although, w
 
 ## Support
 Please do understand that we have absolutely no capacity to provide any kind of technical support for these maps and charts.
-
-If you think you found a bug, please consider [opening an issue](https://github.com/amcharts/covid-charts/issues).
-
-Questions and support requests will be ignored. Sorry, but we simply have too much on our plates right now.
